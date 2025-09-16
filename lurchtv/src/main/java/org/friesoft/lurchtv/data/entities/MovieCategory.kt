@@ -1,0 +1,11 @@
+package org.friesoft.lurchtv.data.entities
+
+import org.friesoft.lurchtv.data.models.MovieCategoriesResponseItem
+
+data class MovieCategory(
+    val id: String,
+    val name: String,
+)
+
+fun MovieCategoriesResponseItem.toMovieCategory(): MovieCategory =
+    MovieCategory(id, name)
