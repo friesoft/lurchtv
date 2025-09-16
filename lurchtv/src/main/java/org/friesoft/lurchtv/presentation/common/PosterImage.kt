@@ -7,21 +7,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import org.friesoft.lurchtv.data.entities.Movie
+import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.util.StringConstants
 
 @Composable
 fun PosterImage(
-    movie: Movie,
+    video: Video,
     modifier: Modifier = Modifier,
 ) {
     AsyncImage(
         modifier = modifier,
         model = ImageRequest.Builder(LocalContext.current)
             .crossfade(true)
-            .data(movie.posterUri)
+            .data(video.posterUri)
             .build(),
-        contentDescription = StringConstants.Composable.ContentDescription.moviePoster(movie.name),
+        contentDescription = StringConstants.Composable.ContentDescription.videoPoster(video.name),
         contentScale = ContentScale.Crop
     )
 }

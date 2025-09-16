@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.friesoft.lurchtv.data.entities.MovieList
+import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.presentation.common.Loading
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 
 @Composable
 fun FavouritesScreen(
-    onMovieClick: (movieId: String) -> Unit,
+    onVideoClick: (videoId: String) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     isTopBarVisible: Boolean,
     favouriteScreenViewModel: FavouriteScreenViewModel = hiltViewModel()
@@ -33,8 +33,8 @@ fun FavouritesScreen(
         }
         is FavouriteScreenUiState.Ready -> {
             Catalog(
-                favouriteMovieList = s.favouriteMovieList,
-                onMovieClick = onMovieClick,
+                favouriteVideoList = s.favouriteVideoList,
+                onVideoClick = onVideoClick,
                 onScroll = onScroll,
                 isTopBarVisible = isTopBarVisible,
                 modifier = Modifier.fillMaxSize(),
@@ -48,21 +48,21 @@ fun FavouritesScreen(
 
 @Composable
 private fun Catalog(
-    favouriteMovieList: MovieList,
+    favouriteVideoList: VideoList,
     filterList: FilterList,
     selectedFilterList: FilterList,
-    onMovieClick: (movieId: String) -> Unit,
+    onVideoClick: (videoId: String) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     onSelectedFilterListUpdated: (FilterList) -> Unit,
     isTopBarVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val childPadding = rememberChildPadding()
-    val filteredMoviesGridState = rememberLazyGridState()
+    val filteredVideosGridState = rememberLazyGridState()
     val shouldShowTopBar by remember {
         derivedStateOf {
-            filteredMoviesGridState.firstVisibleItemIndex == 0 &&
-                filteredMoviesGridState.firstVisibleItemScrollOffset < 100
+            filteredVideosGridState.firstVisibleItemIndex == 0 &&
+                filteredVideosGridState.firstVisibleItemScrollOffset < 100
         }
     }
 
@@ -70,7 +70,7 @@ private fun Catalog(
         onScroll(shouldShowTopBar)
     }
     LaunchedEffect(isTopBarVisible) {
-        if (isTopBarVisible) filteredMoviesGridState.animateScrollToItem(0)
+        if (isTopBarVisible) filteredVideosGridState.animateScrollToItem(0)
     }
 
     val chipRowTopPadding by animateDpAsState(
@@ -81,16 +81,16 @@ private fun Catalog(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(horizontal = childPadding.start)
     ) {
-        MovieFilterChipRow(
+        VideoFilterChipRow(
             filterList = filterList,
             selectedFilterList = selectedFilterList,
             modifier = Modifier.padding(top = chipRowTopPadding),
             onSelectedFilterListUpdated = onSelectedFilterListUpdated
         )
-        FilteredMoviesGrid(
-            state = filteredMoviesGridState,
-            movieList = favouriteMovieList,
-            onMovieClick = onMovieClick
+        FilteredVideosGrid(
+            state = filteredVideosGridState,
+            videoList = favouriteVideoList,
+            onVideoClick = onVideoClick
         )
     }
 }

@@ -1,9 +1,8 @@
 package org.friesoft.lurchtv.data.repositories
 
-import org.friesoft.lurchtv.data.entities.Movie
-import org.friesoft.lurchtv.data.models.MovieCastResponseItem
-import org.friesoft.lurchtv.data.models.MovieCategoriesResponseItem
-import org.friesoft.lurchtv.data.models.MoviesResponseItem
+import org.friesoft.lurchtv.data.entities.Video
+import org.friesoft.lurchtv.data.models.VideoCategoriesResponseItem
+import org.friesoft.lurchtv.data.models.VideoResponseItem
 import org.friesoft.lurchtv.data.util.AssetsReader
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,34 +25,24 @@ internal class CachedDataReader<T>(private val reader: suspend () -> List<T>) {
     }
 }
 
-internal typealias MovieDataReader = CachedDataReader<Movie>
+internal typealias VideoDataReader = CachedDataReader<Video>
 
-internal suspend fun readMovieData(
+internal suspend fun readVideoData(
     assetsReader: AssetsReader,
     resourceId: String,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): List<MoviesResponseItem> = withContext(dispatcher) {
+): List<VideoResponseItem> = withContext(dispatcher) {
     assetsReader.getJsonDataFromAsset(resourceId).map {
-        Json.decodeFromString<List<MoviesResponseItem>>(it)
+        Json.decodeFromString<List<VideoResponseItem>>(it)
     }.getOrDefault(emptyList())
 }
 
-internal suspend fun readMovieCastData(
+internal suspend fun readVideoCategoryData(
     assetsReader: AssetsReader,
     resourceId: String,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): List<MovieCastResponseItem> = withContext(dispatcher) {
+): List<VideoCategoriesResponseItem> = withContext(dispatcher) {
     assetsReader.getJsonDataFromAsset(resourceId).map {
-        Json.decodeFromString<List<MovieCastResponseItem>>(it)
-    }.getOrDefault(emptyList())
-}
-
-internal suspend fun readMovieCategoryData(
-    assetsReader: AssetsReader,
-    resourceId: String,
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-): List<MovieCategoriesResponseItem> = withContext(dispatcher) {
-    assetsReader.getJsonDataFromAsset(resourceId).map {
-        Json.decodeFromString<List<MovieCategoriesResponseItem>>(it)
+        Json.decodeFromString<List<VideoCategoriesResponseItem>>(it)
     }.getOrDefault(emptyList())
 }

@@ -43,15 +43,15 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import org.friesoft.lurchtv.R
-import org.friesoft.lurchtv.data.entities.Movie
-import org.friesoft.lurchtv.data.entities.MovieList
-import org.friesoft.lurchtv.presentation.common.MoviesRow
+import org.friesoft.lurchtv.data.entities.Video
+import org.friesoft.lurchtv.data.entities.VideoList
+import org.friesoft.lurchtv.presentation.common.VideosRow
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
 
 @Composable
 fun SearchScreen(
-    onMovieClick: (movie: Movie) -> Unit,
+    onVideoClick: (video: Video) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     searchScreenViewModel: SearchScreenViewModel = hiltViewModel(),
 ) {
@@ -75,11 +75,11 @@ fun SearchScreen(
         }
 
         is SearchState.Done -> {
-            val movieList = s.movieList
+            val videoList = s.videoList
             SearchResult(
-                movieList = movieList,
-                searchMovies = searchScreenViewModel::query,
-                onMovieClick = onMovieClick
+                videoList = videoList,
+                searchVideos = searchScreenViewModel::query,
+                onVideoClick = onVideoClick
             )
         }
     }
@@ -88,9 +88,9 @@ fun SearchScreen(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchResult(
-    movieList: MovieList,
-    searchMovies: (queryString: String) -> Unit,
-    onMovieClick: (movie: Movie) -> Unit,
+    videoList: VideoList,
+    searchVideos: (queryString: String) -> Unit,
+    onVideoClick: (video: Video) -> Unit,
     modifier: Modifier = Modifier,
     lazyColumnState: LazyListState = rememberLazyListState(),
 ) {
@@ -191,7 +191,7 @@ fun SearchResult(
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            searchMovies(searchQuery)
+                            searchVideos(searchQuery)
                         }
                     ),
                     maxLines = 1,
@@ -204,12 +204,12 @@ fun SearchResult(
         }
 
         item {
-            MoviesRow(
+            VideosRow(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = childPadding.top * 2),
-                movieList = movieList
-            ) { selectedMovie -> onMovieClick(selectedMovie) }
+                videoList = videoList
+            ) { selectedVideo -> onVideoClick(selectedVideo) }
         }
     }
 }

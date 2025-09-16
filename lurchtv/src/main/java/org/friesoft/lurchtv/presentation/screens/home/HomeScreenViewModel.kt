@@ -2,8 +2,8 @@ package org.friesoft.lurchtv.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.friesoft.lurchtv.data.entities.MovieList
-import org.friesoft.lurchtv.data.repositories.MovieRepository
+import org.friesoft.lurchtv.data.entities.VideoList
+import org.friesoft.lurchtv.data.repositories.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,19 +12,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
-class HomeScreeViewModel @Inject constructor(movieRepository: MovieRepository) : ViewModel() {
+class HomeScreeViewModel @Inject constructor(videoRepository: VideoRepository) : ViewModel() {
 
     val uiState: StateFlow<HomeScreenUiState> = combine(
-        movieRepository.getFeaturedMovies(),
-        movieRepository.getTrendingMovies(),
-        movieRepository.getTop10Movies(),
-        movieRepository.getNowPlayingMovies(),
-    ) { featuredMovieList, trendingMovieList, top10MovieList, nowPlayingMovieList ->
+        videoRepository.getFeaturedVideos(),
+        videoRepository.getTrendingVideos(),
+        videoRepository.getTop10Videos(),
+        videoRepository.getNowPlayingVideos(),
+    ) { featuredVideoList, trendingVideoList, top10VideoList, nowPlayingVideoList ->
         HomeScreenUiState.Ready(
-            featuredMovieList,
-            trendingMovieList,
-            top10MovieList,
-            nowPlayingMovieList
+            featuredVideoList,
+            trendingVideoList,
+            top10VideoList,
+            nowPlayingVideoList
         )
     }.stateIn(
         scope = viewModelScope,
@@ -37,9 +37,9 @@ sealed interface HomeScreenUiState {
     data object Loading : HomeScreenUiState
     data object Error : HomeScreenUiState
     data class Ready(
-        val featuredMovieList: MovieList,
-        val trendingMovieList: MovieList,
-        val top10MovieList: MovieList,
-        val nowPlayingMovieList: MovieList
+        val featuredVideoList: VideoList,
+        val trendingVideoList: VideoList,
+        val top10VideoList: VideoList,
+        val nowPlayingVideoList: VideoList
     ) : HomeScreenUiState
 }

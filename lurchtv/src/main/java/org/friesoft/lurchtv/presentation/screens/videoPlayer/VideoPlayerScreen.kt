@@ -23,8 +23,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
-import org.friesoft.lurchtv.data.entities.Movie
-import org.friesoft.lurchtv.data.entities.MovieDetails
+import org.friesoft.lurchtv.data.entities.Video
+import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.presentation.common.Error
 import org.friesoft.lurchtv.presentation.common.Loading
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.VideoPlayerControls
@@ -40,7 +40,7 @@ import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.remember
 import org.friesoft.lurchtv.presentation.utils.handleDPadKeyEvents
 
 object VideoPlayerScreen {
-    const val MovieIdBundleKey = "movieId"
+    const val VideoIdBundleKey = "videoId"
 }
 
 /**
@@ -68,7 +68,7 @@ fun VideoPlayerScreen(
 
         is VideoPlayerScreenUiState.Done -> {
             VideoPlayerScreenContent(
-                movieDetails = s.movieDetails,
+                videoDetails = s.videoDetails,
                 onBackPressed = onBackPressed
             )
         }
@@ -77,7 +77,7 @@ fun VideoPlayerScreen(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun VideoPlayerScreenContent(movieDetails: MovieDetails, onBackPressed: () -> Unit) {
+fun VideoPlayerScreenContent(videoDetails: VideoDetails, onBackPressed: () -> Unit) {
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
 
@@ -85,9 +85,9 @@ fun VideoPlayerScreenContent(movieDetails: MovieDetails, onBackPressed: () -> Un
         hideSeconds = 4,
     )
 
-    LaunchedEffect(exoPlayer, movieDetails) {
-        exoPlayer.addMediaItem(movieDetails.intoMediaItem())
-        movieDetails.similarMovies.forEach {
+    LaunchedEffect(exoPlayer, videoDetails) {
+        exoPlayer.addMediaItem(videoDetails.intoMediaItem())
+        videoDetails.similarVideos.forEach {
             exoPlayer.addMediaItem(it.intoMediaItem())
         }
         exoPlayer.prepare()
@@ -127,7 +127,7 @@ fun VideoPlayerScreenContent(movieDetails: MovieDetails, onBackPressed: () -> Un
             controls = {
                 VideoPlayerControls(
                     player = exoPlayer,
-                    movieDetails = movieDetails,
+                    videoDetails = videoDetails,
                     focusRequester = focusRequester,
                     onShowControls = { videoPlayerState.showControls(exoPlayer.isPlaying) },
                 )
@@ -161,7 +161,7 @@ private fun Modifier.dPadEvents(
     }
 )
 
-private fun MovieDetails.intoMediaItem(): MediaItem {
+private fun VideoDetails.intoMediaItem(): MediaItem {
     return MediaItem.Builder()
         .setUri(videoUri)
         .setSubtitleConfigurations(
@@ -180,7 +180,7 @@ private fun MovieDetails.intoMediaItem(): MediaItem {
         ).build()
 }
 
-private fun Movie.intoMediaItem(): MediaItem {
+private fun Video.intoMediaItem(): MediaItem {
     return MediaItem.Builder()
         .setUri(videoUri)
         .setSubtitleConfigurations(

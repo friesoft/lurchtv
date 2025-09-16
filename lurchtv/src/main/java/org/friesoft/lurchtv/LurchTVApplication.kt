@@ -1,8 +1,8 @@
 package org.friesoft.lurchtv
 
 import android.app.Application
-import org.friesoft.lurchtv.data.repositories.MovieRepository
-import org.friesoft.lurchtv.data.repositories.MovieRepositoryImpl
+import org.friesoft.lurchtv.data.repositories.VideoRepository
+import org.friesoft.lurchtv.data.repositories.VideoRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,10 +14,10 @@ class LurchTVApplication : Application()
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class MovieRepositoryModule {
+abstract class VideoRepositoryModule {
 
     @Binds
-    abstract fun bindMovieRepository(
-        movieRepositoryImpl: MovieRepositoryImpl
-    ): MovieRepository
+    abstract fun bindVideoRepository(
+        videoRepositoryImpl: VideoRepositoryImpl
+    ): VideoRepository
 }

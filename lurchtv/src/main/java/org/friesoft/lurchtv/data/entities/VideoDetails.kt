@@ -1,0 +1,23 @@
+package org.friesoft.lurchtv.data.entities
+
+data class VideoDetails(
+    val id: String,
+    val videoUri: String,
+    val subtitleUri: String?,
+    val posterUri: String,
+    val name: String,
+    val description: String,
+    val pgRating: String,
+    val releaseDate: String,
+    val categories: List<String>,
+    val duration: String,
+    val director: String,
+    val screenplay: String,
+    val music: String,
+    val status: String,
+    val originalLanguage: String,
+    val budget: String,
+    val revenue: String,
+    val similarVideos: VideoList,
+    val reviewsAndRatings: List<VideoReviewsAndRatings>,
+)

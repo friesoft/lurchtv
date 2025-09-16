@@ -1,6 +1,5 @@
-package org.friesoft.lurchtv.presentation.screens.videoPlayer
+package org.friesoft.lurchtv.presentation.screens.videos
 
-import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,29 +12,28 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
-class VideoPlayerScreenViewModel @Inject constructor(
+class VideoDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     repository: VideoRepository,
 ) : ViewModel() {
     val uiState = savedStateHandle
-        .getStateFlow<String?>(VideoPlayerScreen.VideoIdBundleKey, null)
+        .getStateFlow<String?>(VideoDetailsScreen.VideoIdBundleKey, null)
         .map { id ->
             if (id == null) {
-                VideoPlayerScreenUiState.Error
+                VideoDetailsScreenUiState.Error
             } else {
                 val details = repository.getVideoDetails(videoId = id)
-                VideoPlayerScreenUiState.Done(videoDetails = details)
+                VideoDetailsScreenUiState.Done(videoDetails = details)
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = VideoPlayerScreenUiState.Loading
+            initialValue = VideoDetailsScreenUiState.Loading
         )
 }
 
-@Immutable
-sealed class VideoPlayerScreenUiState {
-    data object Loading : VideoPlayerScreenUiState()
-    data object Error : VideoPlayerScreenUiState()
-    data class Done(val videoDetails: VideoDetails) : VideoPlayerScreenUiState()
+sealed class VideoDetailsScreenUiState {
+    data object Loading : VideoDetailsScreenUiState()
+    data object Error : VideoDetailsScreenUiState()
+    data class Done(val videoDetails: VideoDetails) : VideoDetailsScreenUiState()
 }

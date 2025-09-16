@@ -29,13 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
-import org.friesoft.lurchtv.data.entities.MovieDetails
+import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.util.StringConstants
 
 @Composable
 fun VideoPlayerControls(
     player: Player,
-    movieDetails: MovieDetails,
+    videoDetails: VideoDetails,
     focusRequester: FocusRequester,
     onShowControls: () -> Unit = {},
 ) {
@@ -44,9 +44,9 @@ fun VideoPlayerControls(
     VideoPlayerMainFrame(
         mediaTitle = {
             VideoPlayerMediaTitle(
-                title = movieDetails.name,
-                secondaryText = movieDetails.releaseDate,
-                tertiaryText = movieDetails.director,
+                title = videoDetails.name,
+                secondaryText = videoDetails.releaseDate,
+                tertiaryText = videoDetails.director,
                 type = VideoPlayerMediaTitleType.DEFAULT
             )
         },

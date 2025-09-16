@@ -1,7 +1,7 @@
 package org.friesoft.lurchtv.data.util
 
 object StringConstants {
-    object Movie {
+    object Video {
         const val StatusReleased = "Released"
         const val BudgetDefault = "$10M"
         const val WorldWideGrossDefault = "$20M"
@@ -17,12 +17,10 @@ object StringConstants {
     }
 
     object Assets {
-        const val Top250Movies = "movies.json"
-        const val MostPopularMovies = "movies.json"
-        const val InTheaters = "movies.json"
-        const val MostPopularTVShows = "movies.json"
-        const val MovieCategories = "movieCategories.json"
-        const val MovieCast = "movieCast.json"
+        const val Top250Videos = "videos.json"
+        const val MostPopularVideos = "videos.json"
+        const val InTheaters = "videos.json"
+        const val VideoCategories = "videoCategories.json"
     }
 
     object Exceptions {
@@ -32,9 +30,9 @@ object StringConstants {
 
     object Composable {
         object ContentDescription {
-            fun moviePoster(movieName: String) = "Movie poster of $movieName"
+            fun videoPoster(videoName: String) = "Video poster of $videoName"
             fun image(imageName: String) = "image of $imageName"
-            const val MoviesCarousel = "Movies Carousel"
+            const val VideosCarousel = "Videos Carousel"
             const val UserAvatar = "User Profile Button"
             const val DashboardSearchButton = "Dashboard Search Button"
             const val BrandLogoImage = "Brand Logo Image"
@@ -43,19 +41,19 @@ object StringConstants {
         }
 
         const val CategoryDetailsFailureSubject = "category details"
-        const val MoviesFailureSubject = "movies"
-        const val MovieDetailsFailureSubject = "movie details"
+        const val VideosFailureSubject = "videos"
+        const val VideoDetailsFailureSubject = "video details"
         const val HomeScreenTrendingTitle = "Trending"
-        const val HomeScreenNowPlayingMoviesTitle = "Now Playing Movies"
+        const val HomeScreenNowPlayingVideosTitle = "Now Playing Videos"
         const val PopularFilmsThisWeekTitle = "Popular films this week"
         const val BingeWatchDramasTitle = "Bingewatch dramas"
-        fun movieDetailsScreenSimilarTo(name: String) = "Similar to $name"
+        fun videoDetailsScreenSimilarTo(name: String) = "Similar to $name"
         fun reviewCount(count: String) = "$count reviews"
 
         object Placeholders {
             const val AboutSectionTitle = "About LurchTV"
             const val AboutSectionDescription = "Welcome to LurchTV! We are a new and" +
-                " exciting streaming platform that offers a vast selection of movies," +
+                " exciting streaming platform that offers a vast selection of videos," +
                 " TV shows, and original content for you to enjoy. Our team is dedicated" +
                 " to providing an intuitive and seamless streaming experience for all" +
                 " users. With a simple and intuitive interface, you can easily find and" +
@@ -109,10 +107,10 @@ object StringConstants {
         const val VideoPlayerControlSettingsButton = "Playlist Button"
         const val VideoPlayerControlPlayPauseButton = "Playlist Button"
         const val VideoPlayerControlForward = "Fast forward 10 seconds"
-        const val VideoPlayerControlSkipNextButton = "Skip to the next movie"
-        const val VideoPlayerControlSkipPreviousButton = "Skip to the previous movie"
-        const val VideoPlayerControlRepeatAll = "Repeat all movies"
-        const val VideoPlayerControlRepeatOne = "Repeat movie"
+        const val VideoPlayerControlSkipNextButton = "Skip to the next video"
+        const val VideoPlayerControlSkipPreviousButton = "Skip to the previous video"
+        const val VideoPlayerControlRepeatAll = "Repeat all videos"
+        const val VideoPlayerControlRepeatOne = "Repeat video"
         const val VideoPlayerControlRepeatNone = "No repeat"
         const val VideoPlayerControlRepeatButton = "Repeat Button"
     }

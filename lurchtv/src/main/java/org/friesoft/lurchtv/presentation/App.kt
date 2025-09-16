@@ -11,9 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.friesoft.lurchtv.presentation.screens.Screens
-import org.friesoft.lurchtv.presentation.screens.categories.CategoryMovieListScreen
 import org.friesoft.lurchtv.presentation.screens.dashboard.DashboardScreen
-import org.friesoft.lurchtv.presentation.screens.movies.MovieDetailsScreen
+import org.friesoft.lurchtv.presentation.screens.videos.VideoDetailsScreen
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.VideoPlayerScreen
 
 @Composable
@@ -29,43 +28,22 @@ fun App(
         startDestination = Screens.Dashboard(),
         builder = {
             composable(
-                route = Screens.CategoryMovieList(),
+                route = Screens.VideoDetails(),
                 arguments = listOf(
-                    navArgument(CategoryMovieListScreen.CategoryIdBundleKey) {
+                    navArgument(VideoDetailsScreen.VideoIdBundleKey) {
                         type = NavType.StringType
                     }
                 )
             ) {
-                CategoryMovieListScreen(
-                    onBackPressed = {
-                        if (navController.navigateUp()) {
-                            isComingBackFromDifferentScreen = true
-                        }
-                    },
-                    onMovieSelected = { movie ->
-                        navController.navigate(
-                            Screens.MovieDetails.withArgs(movie.id)
-                        )
-                    }
-                )
-            }
-            composable(
-                route = Screens.MovieDetails(),
-                arguments = listOf(
-                    navArgument(MovieDetailsScreen.MovieIdBundleKey) {
-                        type = NavType.StringType
-                    }
-                )
-            ) {
-                MovieDetailsScreen(
-                    goToMoviePlayer = {
+                VideoDetailsScreen(
+                    goToVideoPlayer = {
                         navController.navigate(Screens.VideoPlayer())
                     },
-                    refreshScreenWithNewMovie = { movie ->
+                    refreshScreenWithNewVideo = { video ->
                         navController.navigate(
-                            Screens.MovieDetails.withArgs(movie.id)
+                            Screens.VideoDetails.withArgs(video.id)
                         ) {
-                            popUpTo(Screens.MovieDetails()) {
+                            popUpTo(Screens.VideoDetails()) {
                                 inclusive = true
                             }
                         }
@@ -79,14 +57,9 @@ fun App(
             }
             composable(route = Screens.Dashboard()) {
                 DashboardScreen(
-                    openCategoryMovieList = { categoryId ->
+                    openVideoDetailsScreen = { videoId ->
                         navController.navigate(
-                            Screens.CategoryMovieList.withArgs(categoryId)
-                        )
-                    },
-                    openMovieDetailsScreen = { movieId ->
-                        navController.navigate(
-                            Screens.MovieDetails.withArgs(movieId)
+                            Screens.VideoDetails.withArgs(videoId)
                         )
                     },
                     openVideoPlayer = {
