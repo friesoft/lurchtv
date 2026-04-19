@@ -3,13 +3,9 @@ package org.friesoft.lurchtv.data.repositories
 import org.friesoft.lurchtv.data.entities.VideoCategoryDetails
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.entities.VideoList
-import org.friesoft.lurchtv.data.entities.VideoReviewsAndRatings
 import org.friesoft.lurchtv.data.entities.ThumbnailType
-import org.friesoft.lurchtv.data.util.StringConstants
-import org.friesoft.lurchtv.data.util.StringConstants.Video.Reviewer.DefaultCount
-import org.friesoft.lurchtv.data.util.StringConstants.Video.Reviewer.DefaultRating
-import org.friesoft.lurchtv.data.util.StringConstants.Video.Reviewer.FreshTomatoes
-import org.friesoft.lurchtv.data.util.StringConstants.Video.Reviewer.ReviewerName
+import org.friesoft.lurchtv.data.entities.toVideo
+import org.friesoft.lurchtv.data.services.GronkhApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +15,7 @@ import kotlinx.coroutines.flow.flow
 class VideoRepositoryImpl @Inject constructor(
     private val videoDataSource: VideoDataSource,
     private val videoCategoryDataSource: VideoCategoryDataSource,
+    private val apiService: GronkhApiService
 ) : VideoRepository {
 
     override fun getFeaturedVideos() = flow {
@@ -26,18 +23,13 @@ class VideoRepositoryImpl @Inject constructor(
         emit(list)
     }
 
-    override fun getTrendingVideos(): Flow<VideoList> = flow {
-        val list = videoDataSource.getTrendingVideoList()
+    override fun getRecentVideos(): Flow<VideoList> = flow {
+        val list = videoDataSource.getRecentVideoList()
         emit(list)
     }
 
     override fun getTop10Videos(): Flow<VideoList> = flow {
         val list = videoDataSource.getTop10VideoList()
-        emit(list)
-    }
-
-    override fun getNowPlayingVideos(): Flow<VideoList> = flow {
-        val list = videoDataSource.getNowPlayingVideoList()
         emit(list)
     }
 
@@ -50,7 +42,7 @@ class VideoRepositoryImpl @Inject constructor(
         val categoryList = videoCategoryDataSource.getVideoCategoryList()
         val category = categoryList.find { categoryId == it.id } ?: categoryList.first()
 
-        val videoList = videoDataSource.getVideoList().shuffled().subList(0, 20)
+        val videoList = videoDataSource.getVideoList().shuffled().take(20)
 
         return VideoCategoryDetails(
             id = category.id,
@@ -60,49 +52,84 @@ class VideoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getVideoDetails(videoId: String): VideoDetails {
+        val episodeId = videoId.toIntOrNull() ?: return fallbackVideoDetails(videoId)
+        
+        return try {
+            val info = apiService.getVideoInfo(episodeId)
+            val playlist = apiService.getPlaylist(episodeId)
+            
+            VideoDetails(
+                id = info.episode.toString(),
+                videoUri = playlist.playlistUrl,
+                posterUri = info.previewUrl,
+                name = info.title,
+                description = "Aufgerufen: ${info.views} mal.\nVeröffentlicht am: ${info.createdAt}",
+                releaseDate = info.createdAt.take(10), // e.g., 2024-11-20
+                categories = info.chapters.mapNotNull { it.game?.title }.distinct(),
+                duration = "${info.sourceLength / 60}m",
+                similarVideos = videoDataSource.getVideoList().take(3),
+            )
+        } catch (e: Exception) {
+            fallbackVideoDetails(videoId)
+        }
+    }
+
+    private suspend fun fallbackVideoDetails(videoId: String): VideoDetails {
         val videoList = videoDataSource.getVideoList()
         val video = videoList.find { it.id == videoId } ?: videoList.first()
-        val similarVideoList = videoList.subList(1, 4)
-
+        val similarVideoList = videoList.take(3)
+        
         return VideoDetails(
             id = video.id,
             videoUri = video.videoUri,
-            subtitleUri = video.subtitleUri,
             posterUri = video.posterUri,
             name = video.name,
             description = video.description,
-            pgRating = "PG-13",
-            releaseDate = "2021 (US)",
-            categories = listOf("Action", "Adventure", "Fantasy", "Comedy"),
-            duration = "1h 59m",
-            director = "Larry Page",
-            screenplay = "Sundai Pichai",
-            music = "Sergey Brin",
-            status = "Released",
-            originalLanguage = "English",
-            budget = "$15M",
-            revenue = "$40M",
+            releaseDate = "2024 (DE)",
+            categories = listOf("Gaming"),
+            duration = "Unknown",
             similarVideos = similarVideoList,
-            reviewsAndRatings = listOf(
-                VideoReviewsAndRatings(
-                    reviewerName = FreshTomatoes,
-                    reviewerIconUri = StringConstants.Video.Reviewer.FreshTomatoesImageUrl,
-                    reviewCount = "22",
-                    reviewRating = "89%"
-                ),
-                VideoReviewsAndRatings(
-                    reviewerName = ReviewerName,
-                    reviewerIconUri = StringConstants.Video.Reviewer.ImageUrl,
-                    reviewCount = DefaultCount,
-                    reviewRating = DefaultRating
-                ),
-            ),
         )
     }
-
-    override suspend fun searchVideos(query: String): VideoList {
-        return videoDataSource.getVideoList().filter {
+override suspend fun searchVideos(query: String): VideoList {
+    return try {
+        val response = apiService.getVideos(count = 24, query = query)
+        response.results.videos.map { org.friesoft.lurchtv.data.entities.Video(
+            id = it.episode.toString(),
+            videoUri = "", 
+            subtitleUri = null,
+            posterUri = it.previewUrl,
+            name = it.title,
+            description = "Views: ${it.views}"
+        )}
+    } catch (e: Exception) {
+        videoDataSource.getVideoList().filter {
             it.name.contains(other = query, ignoreCase = true)
+        }
+    }
+}
+
+
+    override suspend fun searchVideosCategorized(query: String): Map<String, VideoList> {
+        return try {
+            val response = apiService.getVideos(count = 24, query = query)
+            val categories = mutableMapOf<String, VideoList>()
+            
+            // Add game categories
+            response.results.games.forEach { game ->
+                if (game.videos.isNotEmpty()) {
+                    categories[game.title] = game.videos.map { it.toVideo(ThumbnailType.Long) }
+                }
+            }
+            
+            // Add VODs
+            if (response.results.videos.isNotEmpty()) {
+                categories["VODs"] = response.results.videos.map { it.toVideo(ThumbnailType.Long) }
+            }
+            
+            categories
+        } catch (e: Exception) {
+            mapOf("Results" to searchVideos(query))
         }
     }
 
@@ -122,7 +149,7 @@ class VideoRepositoryImpl @Inject constructor(
     }
 
     override fun getFavouriteVideos(): Flow<VideoList> = flow {
-        val list = videoDataSource.getFavoriteVideoList()
+        val list = videoDataSource.getFavouriteVideoList()
         emit(list)
     }
 }

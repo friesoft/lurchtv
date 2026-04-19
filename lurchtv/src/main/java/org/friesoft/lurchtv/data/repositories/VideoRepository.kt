@@ -8,13 +8,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
     fun getFeaturedVideos(): Flow<VideoList>
-    fun getTrendingVideos(): Flow<VideoList>
+    fun getRecentVideos(): Flow<VideoList>
     fun getTop10Videos(): Flow<VideoList>
-    fun getNowPlayingVideos(): Flow<VideoList>
     fun getVideoCategories(): Flow<VideoCategoryList>
     suspend fun getVideoCategoryDetails(categoryId: String): VideoCategoryDetails
     suspend fun getVideoDetails(videoId: String): VideoDetails
     suspend fun searchVideos(query: String): VideoList
+    suspend fun searchVideosCategorized(query: String): Map<String, VideoList>
     fun getVideosWithLongThumbnail(): Flow<VideoList>
     fun getVideos(): Flow<VideoList>
     fun getPopularVideosThisWeek(): Flow<VideoList>

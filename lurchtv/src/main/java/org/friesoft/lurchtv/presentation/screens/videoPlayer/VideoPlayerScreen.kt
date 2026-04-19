@@ -1,6 +1,5 @@
 package org.friesoft.lurchtv.presentation.screens.videoPlayer
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -164,38 +163,13 @@ private fun Modifier.dPadEvents(
 private fun VideoDetails.intoMediaItem(): MediaItem {
     return MediaItem.Builder()
         .setUri(videoUri)
-        .setSubtitleConfigurations(
-            if (subtitleUri == null) {
-                emptyList()
-            } else {
-                listOf(
-                    MediaItem.SubtitleConfiguration
-                        .Builder(Uri.parse(subtitleUri))
-                        .setMimeType("application/vtt")
-                        .setLanguage("en")
-                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                        .build()
-                )
-            }
-        ).build()
+        .setMimeType(androidx.media3.common.MimeTypes.APPLICATION_M3U8)
+        .build()
 }
 
 private fun Video.intoMediaItem(): MediaItem {
     return MediaItem.Builder()
         .setUri(videoUri)
-        .setSubtitleConfigurations(
-            if (subtitleUri == null) {
-                emptyList()
-            } else {
-                listOf(
-                    MediaItem.SubtitleConfiguration
-                        .Builder(Uri.parse(subtitleUri))
-                        .setMimeType("application/vtt")
-                        .setLanguage("en")
-                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                        .build()
-                )
-            }
-        )
+        .setMimeType(androidx.media3.common.MimeTypes.APPLICATION_M3U8)
         .build()
 }

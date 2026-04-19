@@ -27,8 +27,12 @@ class FavouriteScreenViewModel @Inject constructor(
         videoRepository.getFavouriteVideos()
     ) { filterList, videoList ->
         val idList = filterList.toIdList()
-        val filtered = videoList.filterIndexed { index, _ ->
-            idList.contains(index)
+        val filtered = if (filterList.items.isEmpty()) {
+             videoList
+        } else {
+            videoList.filterIndexed { index, _ ->
+                idList.contains(index)
+            }
         }
         FavouriteScreenUiState.Ready(filtered, filterList)
     }.stateIn(
@@ -45,8 +49,7 @@ class FavouriteScreenViewModel @Inject constructor(
         val filterList = FilterList(
             listOf(
                 FilterCondition.Videos,
-                FilterCondition.AddedLastWeek,
-                FilterCondition.AvailableIn4K
+                FilterCondition.AddedLastWeek
             )
         )
     }
@@ -62,7 +65,7 @@ sealed interface FavouriteScreenUiState {
 data class FilterList(val items: List<FilterCondition> = emptyList()) {
     fun toIdList(): List<Int> {
         if (items.isEmpty()) {
-            return FilterCondition.None.idList
+            return emptyList()
         }
         return items.asSequence().map {
             it.idList
@@ -74,8 +77,6 @@ data class FilterList(val items: List<FilterCondition> = emptyList()) {
 
 @Immutable
 enum class FilterCondition(val idList: List<Int>, @StringRes val labelId: Int) {
-    None((0..28).toList(), R.string.favorites_unknown),
     Videos((0..9).toList(), R.string.favorites_videos),
     AddedLastWeek((18..23).toList(), R.string.favorites_added_last_week),
-    AvailableIn4K((24..28).toList(), R.string.favorites_available_in_4k),
 }

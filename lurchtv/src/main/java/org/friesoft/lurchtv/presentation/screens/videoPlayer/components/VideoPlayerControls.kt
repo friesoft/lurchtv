@@ -19,10 +19,6 @@ package org.friesoft.lurchtv.presentation.screens.videoPlayer.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesomeMotion
-import androidx.compose.material.icons.filled.ClosedCaption
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +26,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import org.friesoft.lurchtv.data.entities.VideoDetails
-import org.friesoft.lurchtv.data.util.StringConstants
 
 @Composable
 fun VideoPlayerControls(
@@ -39,14 +34,12 @@ fun VideoPlayerControls(
     focusRequester: FocusRequester,
     onShowControls: () -> Unit = {},
 ) {
-    val isPlaying = player.isPlaying
-
     VideoPlayerMainFrame(
         mediaTitle = {
             VideoPlayerMediaTitle(
                 title = videoDetails.name,
                 secondaryText = videoDetails.releaseDate,
-                tertiaryText = videoDetails.director,
+                tertiaryText = "",
                 type = VideoPlayerMediaTitleType.DEFAULT
             )
         },
@@ -62,31 +55,6 @@ fun VideoPlayerControls(
                 )
                 NextButton(
                     player = player,
-                    onShowControls = onShowControls
-                )
-                RepeatButton(
-                    player = player,
-                    onShowControls = onShowControls,
-                )
-                VideoPlayerControlsIcon(
-                    icon = Icons.Default.AutoAwesomeMotion,
-                    isPlaying = isPlaying,
-                    contentDescription =
-                    StringConstants.Composable.VideoPlayerControlPlaylistButton,
-                    onShowControls = onShowControls
-                )
-                VideoPlayerControlsIcon(
-                    icon = Icons.Default.ClosedCaption,
-                    isPlaying = isPlaying,
-                    contentDescription =
-                    StringConstants.Composable.VideoPlayerControlClosedCaptionsButton,
-                    onShowControls = onShowControls
-                )
-                VideoPlayerControlsIcon(
-                    icon = Icons.Default.Settings,
-                    isPlaying = isPlaying,
-                    contentDescription =
-                    StringConstants.Composable.VideoPlayerControlSettingsButton,
                     onShowControls = onShowControls
                 )
             }

@@ -12,19 +12,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
-class HomeScreeViewModel @Inject constructor(videoRepository: VideoRepository) : ViewModel() {
+class HomeScreenViewModel @Inject constructor(videoRepository: VideoRepository) : ViewModel() {
 
     val uiState: StateFlow<HomeScreenUiState> = combine(
         videoRepository.getFeaturedVideos(),
-        videoRepository.getTrendingVideos(),
+        videoRepository.getRecentVideos(),
         videoRepository.getTop10Videos(),
-        videoRepository.getNowPlayingVideos(),
-    ) { featuredVideoList, trendingVideoList, top10VideoList, nowPlayingVideoList ->
+    ) { featuredVideoList, recentVideoList, top10VideoList ->
         HomeScreenUiState.Ready(
             featuredVideoList,
-            trendingVideoList,
-            top10VideoList,
-            nowPlayingVideoList
+            recentVideoList,
+            top10VideoList
         )
     }.stateIn(
         scope = viewModelScope,
@@ -38,8 +36,7 @@ sealed interface HomeScreenUiState {
     data object Error : HomeScreenUiState
     data class Ready(
         val featuredVideoList: VideoList,
-        val trendingVideoList: VideoList,
-        val top10VideoList: VideoList,
-        val nowPlayingVideoList: VideoList
+        val recentVideoList: VideoList,
+        val top10VideoList: VideoList
     ) : HomeScreenUiState
 }

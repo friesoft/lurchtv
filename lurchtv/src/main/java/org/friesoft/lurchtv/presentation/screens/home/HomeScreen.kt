@@ -23,8 +23,8 @@ import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.common.Error
+import org.friesoft.lurchtv.presentation.common.ImmersiveVideoList
 import org.friesoft.lurchtv.presentation.common.Loading
-import org.friesoft.lurchtv.presentation.common.VideosRow
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 
 @Composable
@@ -33,17 +33,16 @@ fun HomeScreen(
     goToVideoPlayer: (video: Video) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     isTopBarVisible: Boolean,
-    homeScreeViewModel: HomeScreeViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
-    val uiState by homeScreeViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by homeScreenViewModel.uiState.collectAsStateWithLifecycle()
 
     when (val s = uiState) {
         is HomeScreenUiState.Ready -> {
             Catalog(
                 featuredVideos = s.featuredVideoList,
-                trendingVideos = s.trendingVideoList,
+                recentVideos = s.recentVideoList,
                 top10Videos = s.top10VideoList,
-                nowPlayingVideos = s.nowPlayingVideoList,
                 onVideoClick = onVideoClick,
                 onScroll = onScroll,
                 goToVideoPlayer = goToVideoPlayer,
@@ -60,9 +59,8 @@ fun HomeScreen(
 @Composable
 private fun Catalog(
     featuredVideos: VideoList,
-    trendingVideos: VideoList,
+    recentVideos: VideoList,
     top10Videos: VideoList,
-    nowPlayingVideos: VideoList,
     onVideoClick: (video: Video) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     goToVideoPlayer: (video: Video) -> Unit,
@@ -109,12 +107,11 @@ private fun Catalog(
                  */
             )
         }
-        item(contentType = "VideosRow") {
-            VideosRow(
-                modifier = Modifier.padding(top = 16.dp),
-                videoList = trendingVideos,
-                title = StringConstants.Composable.HomeScreenTrendingTitle,
-                onVideoSelected = onVideoClick
+        item(contentType = "ImmersiveVideoList") {
+            ImmersiveVideoList(
+                videoList = recentVideos,
+                title = StringConstants.Composable.HomeScreenRecentTitle,
+                onVideoClick = onVideoClick
             )
         }
         item(contentType = "Top10VideosList") {
@@ -124,14 +121,6 @@ private fun Catalog(
                 modifier = Modifier.onFocusChanged {
                     immersiveListHasFocus = it.hasFocus
                 },
-            )
-        }
-        item(contentType = "VideosRow") {
-            VideosRow(
-                modifier = Modifier.padding(top = 16.dp),
-                videoList = nowPlayingVideos,
-                title = StringConstants.Composable.HomeScreenNowPlayingVideosTitle,
-                onVideoSelected = onVideoClick
             )
         }
     }

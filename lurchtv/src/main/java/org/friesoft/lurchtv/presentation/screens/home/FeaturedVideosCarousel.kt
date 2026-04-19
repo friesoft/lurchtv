@@ -38,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
@@ -72,6 +73,8 @@ fun FeaturedVideosCarousel(
     goToVideoPlayer: (video: Video) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (videos.isEmpty()) return
+
     val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
     var isCarouselFocused by remember { mutableStateOf(false) }
     val alpha = if (isCarouselFocused) {
@@ -178,7 +181,8 @@ private fun CarouselItemForeground(
                         blurRadius = 2f
                     )
                 ),
-                maxLines = 1
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = video.description,
@@ -192,7 +196,8 @@ private fun CarouselItemForeground(
                         blurRadius = 2f
                     )
                 ),
-                maxLines = 1,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 8.dp)
             )
             AnimatedVisibility(

@@ -79,19 +79,13 @@ fun VideoDetails(
                     DotSeparatedRow(
                         modifier = Modifier.padding(top = 20.dp),
                         texts = listOf(
-                            videoDetails.pgRating,
                             videoDetails.releaseDate,
-                            videoDetails.categories.joinToString(", "),
+                            videoDetails.categories.take(3).joinToString(", "),
                             videoDetails.duration
                         )
                     )
-                    DirectorScreenplayMusicRow(
-                        director = videoDetails.director,
-                        screenplay = videoDetails.screenplay,
-                        music = videoDetails.music
-                    )
                 }
-                WatchTrailerButton(
+                WatchNowButton(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
@@ -105,7 +99,7 @@ fun VideoDetails(
 }
 
 @Composable
-private fun WatchTrailerButton(
+private fun WatchNowButton(
     modifier: Modifier = Modifier,
     goToVideoPlayer: () -> Unit
 ) {
@@ -121,39 +115,8 @@ private fun WatchTrailerButton(
         )
         Spacer(Modifier.size(8.dp))
         Text(
-            text = stringResource(R.string.watch_trailer),
+            text = stringResource(R.string.watch_now),
             style = MaterialTheme.typography.titleSmall
-        )
-    }
-}
-
-@Composable
-private fun DirectorScreenplayMusicRow(
-    director: String,
-    screenplay: String,
-    music: String
-) {
-    Row(modifier = Modifier.padding(top = 32.dp)) {
-        TitleValueText(
-            modifier = Modifier
-                .padding(end = 32.dp)
-                .weight(1f),
-            title = stringResource(R.string.director),
-            value = director
-        )
-
-        TitleValueText(
-            modifier = Modifier
-                .padding(end = 32.dp)
-                .weight(1f),
-            title = stringResource(R.string.screenplay),
-            value = screenplay
-        )
-
-        TitleValueText(
-            modifier = Modifier.weight(1f),
-            title = stringResource(R.string.music),
-            value = music
         )
     }
 }
@@ -167,7 +130,7 @@ private fun VideoDescription(description: String) {
             fontWeight = FontWeight.Normal
         ),
         modifier = Modifier.padding(top = 8.dp),
-        maxLines = 2
+        maxLines = 3
     )
 }
 

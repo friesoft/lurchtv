@@ -24,18 +24,18 @@ class SearchScreenViewModel @Inject constructor(
 
     private suspend fun postQuery(queryString: String) {
         internalSearchState.emit(SearchState.Searching)
-        val result = videoRepository.searchVideos(query = queryString)
+        val result = videoRepository.searchVideosCategorized(query = queryString)
         internalSearchState.emit(SearchState.Done(result))
     }
 
     val searchState = internalSearchState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SearchState.Done(emptyList())
+        initialValue = SearchState.Done(emptyMap())
     )
 }
 
 sealed interface SearchState {
     data object Searching : SearchState
-    data class Done(val videoList: VideoList) : SearchState
+    data class Done(val categories: Map<String, VideoList>) : SearchState
 }

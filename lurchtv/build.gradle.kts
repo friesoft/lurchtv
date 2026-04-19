@@ -1,15 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.androidx.baselineprofile)
-}
-
-kotlin {
-    jvmToolchain(17)
 }
 
 android {
@@ -51,9 +45,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
 
 dependencies {
@@ -85,6 +76,7 @@ dependencies {
     // Media3
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.hls)
 
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
@@ -92,12 +84,20 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.paging.common)
     ksp(libs.hilt.compiler)
 
-    // Baseline profile installer
-    implementation(libs.androidx.profileinstaller)
+    // Retrofit for Networking
+    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 
     // Compose Previews
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }

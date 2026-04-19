@@ -1,25 +1,8 @@
 package org.friesoft.lurchtv.data.util
 
 object StringConstants {
-    object Video {
-        const val StatusReleased = "Released"
-        const val BudgetDefault = "$10M"
-        const val WorldWideGrossDefault = "$20M"
-
-        object Reviewer {
-            const val FreshTomatoes = "Fresh Tomatoes"
-            const val FreshTomatoesImageUrl = ""
-            const val ReviewerName = "Rater"
-            const val ImageUrl = ""
-            const val DefaultCount = "1.8M"
-            const val DefaultRating = "9.2"
-        }
-    }
 
     object Assets {
-        const val Top250Videos = "videos.json"
-        const val MostPopularVideos = "videos.json"
-        const val InTheaters = "videos.json"
         const val VideoCategories = "videoCategories.json"
     }
 
@@ -43,8 +26,7 @@ object StringConstants {
         const val CategoryDetailsFailureSubject = "category details"
         const val VideosFailureSubject = "videos"
         const val VideoDetailsFailureSubject = "video details"
-        const val HomeScreenTrendingTitle = "Trending"
-        const val HomeScreenNowPlayingVideosTitle = "Now Playing Videos"
+        const val HomeScreenRecentTitle = "Recent"
         const val PopularFilmsThisWeekTitle = "Popular films this week"
         const val BingeWatchDramasTitle = "Bingewatch dramas"
         fun videoDetailsScreenSimilarTo(name: String) = "Similar to $name"

@@ -36,8 +36,8 @@ fun App(
                 )
             ) {
                 VideoDetailsScreen(
-                    goToVideoPlayer = {
-                        navController.navigate(Screens.VideoPlayer())
+                    goToVideoPlayer = { video ->
+                        navController.navigate(Screens.VideoPlayer.withArgs(video.id))
                     },
                     refreshScreenWithNewVideo = { video ->
                         navController.navigate(
@@ -62,8 +62,8 @@ fun App(
                             Screens.VideoDetails.withArgs(videoId)
                         )
                     },
-                    openVideoPlayer = {
-                        navController.navigate(Screens.VideoPlayer())
+                    openVideoPlayer = { video ->
+                        navController.navigate(Screens.VideoPlayer.withArgs(video.id))
                     },
                     onBackPressed = onBackPressed,
                     isComingBackFromDifferentScreen = isComingBackFromDifferentScreen,
@@ -72,7 +72,14 @@ fun App(
                     }
                 )
             }
-            composable(route = Screens.VideoPlayer()) {
+            composable(
+                route = Screens.VideoPlayer(),
+                arguments = listOf(
+                    navArgument(VideoPlayerScreen.VideoIdBundleKey) {
+                        type = NavType.StringType
+                    }
+                )
+            ) {
                 VideoPlayerScreen(
                     onBackPressed = {
                         if (navController.navigateUp()) {

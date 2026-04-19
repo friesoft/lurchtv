@@ -13,7 +13,7 @@ enum class Screens(
 ) {
     Profile,
     Home(isTabItem = true),
-    Favourites(isTabItem = true),
+    Videothek(isTabItem = true),
     Search(isTabItem = true, tabIcon = Icons.Default.Search),
     VideoDetails(listOf(VideoDetailsScreen.VideoIdBundleKey)),
     Dashboard,

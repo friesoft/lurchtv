@@ -45,7 +45,7 @@ import androidx.tv.material3.Text
 import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoList
-import org.friesoft.lurchtv.presentation.common.VideosRow
+import org.friesoft.lurchtv.presentation.common.ImmersiveVideoList
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
 
@@ -75,11 +75,12 @@ fun SearchScreen(
         }
 
         is SearchState.Done -> {
-            val videoList = s.videoList
+            val categories = s.categories
             SearchResult(
-                videoList = videoList,
+                categories = categories,
                 searchVideos = searchScreenViewModel::query,
-                onVideoClick = onVideoClick
+                onVideoClick = onVideoClick,
+                lazyColumnState = lazyColumnState
             )
         }
     }
@@ -88,7 +89,7 @@ fun SearchScreen(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchResult(
-    videoList: VideoList,
+    categories: Map<String, VideoList>,
     searchVideos: (queryString: String) -> Unit,
     onVideoClick: (video: Video) -> Unit,
     modifier: Modifier = Modifier,
@@ -203,13 +204,14 @@ fun SearchResult(
             }
         }
 
-        item {
-            VideosRow(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = childPadding.top * 2),
-                videoList = videoList
-            ) { selectedVideo -> onVideoClick(selectedVideo) }
+        categories.forEach { (title, videoList) ->
+            item {
+                ImmersiveVideoList(
+                    title = title,
+                    videoList = videoList,
+                    onVideoClick = onVideoClick
+                )
+            }
         }
     }
 }

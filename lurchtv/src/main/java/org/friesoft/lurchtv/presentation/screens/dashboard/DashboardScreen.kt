@@ -227,7 +227,7 @@ private fun Body(
                 isTopBarVisible = isTopBarVisible
             )
         }
-        composable(Screens.Favourites()) {
+        composable(Screens.Videothek()) {
             FavouritesScreen(
                 onVideoClick = openVideoDetailsScreen,
                 onScroll = updateTopBarVisibility,

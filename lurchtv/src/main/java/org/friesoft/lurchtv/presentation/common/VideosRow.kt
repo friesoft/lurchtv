@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -102,7 +103,7 @@ fun VideosRow(
                         Modifier
                     }
                     VideoRowItem(
-                        modifier = itemModifier.weight(1f),
+                        modifier = itemModifier,
                         index = index,
                         itemDirection = itemDirection,
                         onVideoSelected = {
@@ -177,7 +178,7 @@ fun ImmersiveListVideosRow(
                         Modifier
                     }
                     VideoRowItem(
-                        modifier = itemModifier.weight(1f),
+                        modifier = itemModifier,
                         index = index,
                         itemDirection = itemDirection,
                         onVideoSelected = {
@@ -208,6 +209,7 @@ private fun VideoRowItem(
     onVideoFocused: (Video) -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val width = if (itemDirection == ItemDirection.Vertical) 150.dp else 240.dp
 
     VideoCard(
         onClick = { onVideoSelected(video) },
@@ -219,6 +221,7 @@ private fun VideoRowItem(
             )
         },
         modifier = Modifier
+            .width(width)
             .onFocusChanged {
                 isFocused = it.isFocused
                 if (it.isFocused) {
@@ -306,8 +309,9 @@ private fun VideoRowItemText(
                 .alpha(videoNameAlpha)
                 .fillMaxWidth()
                 .padding(top = 4.dp),
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            lineHeight = 16.sp
         )
     }
 }

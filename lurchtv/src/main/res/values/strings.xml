@@ -23,7 +23,6 @@
     <string name="video_category_desc">video category %s</string>
     <string name="favorites_videos">Videos</string>
     <string name="favorites_added_last_week">Added Last Week</string>
-    <string name="favorites_available_in_4k">Available in 4K</string>
     <string name="favorites_unknown">Unknown filter</string>
     <string name="ad">Ad</string>
     <string name="live">Live</string>
