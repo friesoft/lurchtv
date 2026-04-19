@@ -12,7 +12,8 @@ data class Video(
     val episode: Int = 0,
     val videoLength: Int = 0,
     val views: Int = 0,
-    val createdAt: String = ""
+    val createdAt: String = "",
+    val lastPlaybackPosition: Long = 0
 )
 
 fun VideoResponseItem.toVideo(thumbnailType: ThumbnailType = ThumbnailType.Standard): Video {

@@ -74,6 +74,7 @@ class VideoRepositoryImpl @Inject constructor(
                 releaseDate = info.createdAt.take(10), // e.g., 2024-11-20
                 categories = info.chapters.mapNotNull { it.game?.title }.distinct(),
                 duration = "${info.sourceLength / 60}m",
+                videoLength = info.sourceLength,
                 similarVideos = videoDataSource.getVideoList().take(3),
             )
         } catch (e: Exception) {
@@ -161,5 +162,13 @@ class VideoRepositoryImpl @Inject constructor(
 
     override suspend fun getPlaybackPosition(videoId: String): Long {
         return dataStore.data.map { it[longPreferencesKey("pos_$videoId")] ?: 0L }.first()
+    }
+
+    override fun getAllPlaybackPositions(): Flow<Map<String, Long>> {
+        return dataStore.data.map { prefs ->
+            prefs.asMap().entries
+                .filter { it.key.name.startsWith("pos_") }
+                .associate { it.key.name.removePrefix("pos_") to (it.value as Long) }
+        }
     }
 }

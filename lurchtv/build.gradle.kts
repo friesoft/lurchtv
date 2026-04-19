@@ -104,6 +104,9 @@ dependencies {
     // Material components optimized for TV apps
     implementation(libs.androidx.tv.material)
 
+    // General Material3
+    implementation(libs.androidx.material3)
+
     // ViewModel in Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 

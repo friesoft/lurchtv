@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,21 @@ class SearchScreenViewModel @Inject constructor(
         internalSearchState.emit(SearchState.Done(result))
     }
 
-    val searchState = internalSearchState.stateIn(
+    val searchState = combine(
+        internalSearchState,
+        videoRepository.getAllPlaybackPositions()
+    ) { state, progressMap ->
+        if (state is SearchState.Done) {
+            val enrichedCategories = state.categories.mapValues { (_, videos) ->
+                videos.map { video ->
+                    video.copy(lastPlaybackPosition = progressMap[video.id] ?: 0L)
+                }
+            }
+            SearchState.Done(enrichedCategories)
+        } else {
+            state
+        }
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SearchState.Done(emptyMap())

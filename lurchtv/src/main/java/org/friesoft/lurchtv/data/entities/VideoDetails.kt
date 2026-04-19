@@ -9,7 +9,9 @@ data class VideoDetails(
     val releaseDate: String,
     val categories: List<String>,
     val duration: String,
+    val videoLength: Int = 0,
     val similarVideos: VideoList,
+    val lastPlaybackPosition: Long = 0
 )
 
 fun VideoDetails.toVideo(): Video = Video(
@@ -18,5 +20,7 @@ fun VideoDetails.toVideo(): Video = Video(
     subtitleUri = null,
     posterUri = posterUri,
     name = name,
-    description = description
+    description = description,
+    videoLength = videoLength,
+    lastPlaybackPosition = lastPlaybackPosition
 )

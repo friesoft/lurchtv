@@ -14,6 +14,7 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -84,6 +85,36 @@ fun VideoDetails(
                             videoDetails.duration
                         )
                     )
+                    if (videoDetails.lastPlaybackPosition > 0) {
+                        val posSeconds = videoDetails.lastPlaybackPosition / 1000
+                        val h = posSeconds / 3600
+                        val m = (posSeconds % 3600) / 60
+                        val s = posSeconds % 60
+                        val posText = if (h > 0) {
+                            String.format("%02d:%02d:%02d", h, m, s)
+                        } else {
+                            String.format("%02d:%02d", m, s)
+                        }
+                        
+                        Text(
+                            text = "Gesehen bis: $posText",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                        
+                        if (videoDetails.videoLength > 0) {
+                            val progress = videoDetails.lastPlaybackPosition.toFloat() / (videoDetails.videoLength * 1000f)
+                            LinearProgressIndicator(
+                                progress = { progress.coerceIn(0f, 1f) },
+                                modifier = Modifier
+                                    .padding(top = 8.dp)
+                                    .fillMaxWidth(0.6f)
+                                    .height(4.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            )
+                        }
+                    }
                 }
                 WatchNowButton(
                     modifier = Modifier.onFocusChanged {

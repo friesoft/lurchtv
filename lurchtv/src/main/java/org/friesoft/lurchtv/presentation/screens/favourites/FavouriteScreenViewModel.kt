@@ -24,13 +24,17 @@ class FavouriteScreenViewModel @Inject constructor(
 
     val uiState: StateFlow<FavouriteScreenUiState> = combine(
         selectedFilterList,
-        videoRepository.getFavouriteVideos()
-    ) { filterList, videoList ->
+        videoRepository.getFavouriteVideos(),
+        videoRepository.getAllPlaybackPositions()
+    ) { filterList, videoList, progressMap ->
         val idList = filterList.toIdList()
+        val enriched = videoList.map { video ->
+            video.copy(lastPlaybackPosition = progressMap[video.id] ?: 0L)
+        }
         val filtered = if (filterList.items.isEmpty()) {
-             videoList
+             enriched
         } else {
-            videoList.filterIndexed { index, _ ->
+            enriched.filterIndexed { index, _ ->
                 idList.contains(index)
             }
         }

@@ -21,4 +21,5 @@ interface VideoRepository {
     fun getFavouriteVideos(): Flow<VideoList>
     suspend fun savePlaybackPosition(videoId: String, position: Long)
     suspend fun getPlaybackPosition(videoId: String): Long
+    fun getAllPlaybackPositions(): Flow<Map<String, Long>>
 }
