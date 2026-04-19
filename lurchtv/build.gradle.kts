@@ -101,3 +101,9 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+tasks.register("printVersionName") {
+    doLast {
+        println(android.defaultConfig.versionName)
+    }
+}
