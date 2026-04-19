@@ -5,6 +5,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -68,7 +69,8 @@ fun VideoPlayerScreen(
         is VideoPlayerScreenUiState.Done -> {
             VideoPlayerScreenContent(
                 videoDetails = s.videoDetails,
-                onBackPressed = onBackPressed
+                onBackPressed = onBackPressed,
+                viewModel = videoPlayerScreenViewModel
             )
         }
     }
@@ -76,7 +78,11 @@ fun VideoPlayerScreen(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun VideoPlayerScreenContent(videoDetails: VideoDetails, onBackPressed: () -> Unit) {
+fun VideoPlayerScreenContent(
+    videoDetails: VideoDetails,
+    onBackPressed: () -> Unit,
+    viewModel: VideoPlayerScreenViewModel
+) {
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
 
@@ -89,10 +95,22 @@ fun VideoPlayerScreenContent(videoDetails: VideoDetails, onBackPressed: () -> Un
         videoDetails.similarVideos.forEach {
             exoPlayer.addMediaItem(it.intoMediaItem())
         }
+        val savedPosition = viewModel.getPlaybackPosition()
+        exoPlayer.seekTo(savedPosition)
         exoPlayer.prepare()
     }
 
-    BackHandler(onBack = onBackPressed)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.savePlaybackPosition(exoPlayer.currentPosition)
+            exoPlayer.release()
+        }
+    }
+
+    BackHandler(onBack = {
+        viewModel.savePlaybackPosition(exoPlayer.currentPosition)
+        onBackPressed()
+    })
 
     val pulseState = rememberVideoPlayerPulseState()
 

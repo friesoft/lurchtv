@@ -1,5 +1,9 @@
 package org.friesoft.lurchtv.data.repositories
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import org.friesoft.lurchtv.data.entities.VideoCategoryDetails
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.entities.VideoList
@@ -9,13 +13,16 @@ import org.friesoft.lurchtv.data.services.GronkhApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class VideoRepositoryImpl @Inject constructor(
     private val videoDataSource: VideoDataSource,
     private val videoCategoryDataSource: VideoCategoryDataSource,
-    private val apiService: GronkhApiService
+    private val apiService: GronkhApiService,
+    private val dataStore: DataStore<Preferences>
 ) : VideoRepository {
 
     override fun getFeaturedVideos() = flow {
@@ -91,24 +98,17 @@ class VideoRepositoryImpl @Inject constructor(
             similarVideos = similarVideoList,
         )
     }
-override suspend fun searchVideos(query: String): VideoList {
-    return try {
-        val response = apiService.getVideos(count = 24, query = query)
-        response.results.videos.map { org.friesoft.lurchtv.data.entities.Video(
-            id = it.episode.toString(),
-            videoUri = "", 
-            subtitleUri = null,
-            posterUri = it.previewUrl,
-            name = it.title,
-            description = "Views: ${it.views}"
-        )}
-    } catch (e: Exception) {
-        videoDataSource.getVideoList().filter {
-            it.name.contains(other = query, ignoreCase = true)
+
+    override suspend fun searchVideos(query: String): VideoList {
+        return try {
+            val response = apiService.getVideos(count = 24, query = query)
+            response.results.videos.map { it.toVideo() }
+        } catch (e: Exception) {
+            videoDataSource.getVideoList().filter {
+                it.name.contains(other = query, ignoreCase = true)
+            }
         }
     }
-}
-
 
     override suspend fun searchVideosCategorized(query: String): Map<String, VideoList> {
         return try {
@@ -151,5 +151,15 @@ override suspend fun searchVideos(query: String): VideoList {
     override fun getFavouriteVideos(): Flow<VideoList> = flow {
         val list = videoDataSource.getFavouriteVideoList()
         emit(list)
+    }
+
+    override suspend fun savePlaybackPosition(videoId: String, position: Long) {
+        dataStore.edit { prefs ->
+            prefs[longPreferencesKey("pos_$videoId")] = position
+        }
+    }
+
+    override suspend fun getPlaybackPosition(videoId: String): Long {
+        return dataStore.data.map { it[longPreferencesKey("pos_$videoId")] ?: 0L }.first()
     }
 }

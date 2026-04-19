@@ -19,4 +19,6 @@ interface VideoRepository {
     fun getVideos(): Flow<VideoList>
     fun getPopularVideosThisWeek(): Flow<VideoList>
     fun getFavouriteVideos(): Flow<VideoList>
+    suspend fun savePlaybackPosition(videoId: String, position: Long)
+    suspend fun getPlaybackPosition(videoId: String): Long
 }
