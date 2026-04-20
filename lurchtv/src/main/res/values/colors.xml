@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lurchtv_background">#1A1C1E</color>
+    <color name="lurchtv_background">#0F0F13</color>
     <color name="primary">#A8C8FF</color>
     <color name="onPrimary">#003062</color>
     <color name="primaryContainer">#00468A</color>
@@ -24,5 +24,7 @@
     <color name="errorContainer">#93000A</color>
     <color name="onErrorContainer">#FFB4AB</color>
     <color name="border">#8E9099</color>
-    <color name="ic_launcher_background">#1A1C1E</color>
+    <color name="gronkh_purple">#5B4DFF</color>
+    <color name="gronkh_dark">#0F0F13</color>
+    <color name="ic_launcher_background">#0F0F13</color>
 </resources>

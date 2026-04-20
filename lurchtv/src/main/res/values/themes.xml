@@ -5,7 +5,7 @@
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/lurchtv_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_play_circle</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.LurchTV</item>
     </style>
 </resources>
