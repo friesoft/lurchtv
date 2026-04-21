@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -108,9 +110,26 @@ fun VideoPlayerScreenContent(
     }
 
     BackHandler(onBack = {
-        viewModel.savePlaybackPosition(exoPlayer.currentPosition)
-        onBackPressed()
+        if (videoPlayerState.isControlsVisible) {
+            videoPlayerState.hideControls()
+        } else {
+            viewModel.savePlaybackPosition(exoPlayer.currentPosition)
+            onBackPressed()
+        }
     })
+
+    var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
+    DisposableEffect(exoPlayer) {
+        val listener = object : androidx.media3.common.Player.Listener {
+            override fun onIsPlayingChanged(playing: Boolean) {
+                isPlaying = playing
+            }
+        }
+        exoPlayer.addListener(listener)
+        onDispose {
+            exoPlayer.removeListener(listener)
+        }
+    }
 
     val pulseState = rememberVideoPlayerPulseState()
 
@@ -136,7 +155,7 @@ fun VideoPlayerScreenContent(
         VideoPlayerOverlay(
             modifier = Modifier.align(Alignment.BottomCenter),
             focusRequester = focusRequester,
-            isPlaying = exoPlayer.isPlaying,
+            isPlaying = isPlaying,
             isControlsVisible = videoPlayerState.isControlsVisible,
             centerButton = { VideoPlayerPulse(pulseState) },
             subtitles = { /* TODO Implement subtitles */ },
@@ -146,7 +165,7 @@ fun VideoPlayerScreenContent(
                     player = exoPlayer,
                     videoDetails = videoDetails,
                     focusRequester = focusRequester,
-                    onShowControls = { videoPlayerState.showControls(exoPlayer.isPlaying) },
+                    onShowControls = { videoPlayerState.showControls(isPlaying) },
                 )
             }
         )

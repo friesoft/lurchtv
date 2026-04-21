@@ -30,6 +30,10 @@ class VideoPlayerState(
         }
     }
 
+    fun hideControls() {
+        isControlsVisible = false
+    }
+
     private fun updateControlVisibility(seconds: Int = hideSeconds) {
         isControlsVisible = true
         channel.trySend(seconds)
@@ -39,6 +43,9 @@ class VideoPlayerState(
 
     @OptIn(FlowPreview::class)
     suspend fun observe() {
+        if (isControlsVisible) {
+            channel.trySend(hideSeconds)
+        }
         channel.consumeAsFlow()
             .debounce { it.toLong() * 1000 }
             .collect { isControlsVisible = false }
