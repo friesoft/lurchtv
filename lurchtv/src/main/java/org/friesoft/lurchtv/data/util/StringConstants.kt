@@ -48,40 +48,17 @@ object StringConstants {
             const val AboutSectionAppVersionTitle = "Application Version"
             const val LanguageSectionTitle = "Language"
             val LanguageSectionItems = listOf(
-                "English (US)",
-                "English (UK)",
-                "Français",
-                "Española",
-                "हिंदी"
+                "Deutsch",
+                "English"
             )
-            const val SearchHistorySectionTitle = "Search history"
-            const val SearchHistoryClearAll = "Clear All"
-            val SampleSearchHistory = listOf(
-                "The Light Knight",
-                "Iceberg",
-                "Jungle Gump",
-                "The Devilfather",
-                "Space Wars",
-                "The Lion Queen"
-            )
-            const val SubtitlesSectionTitle = "Settings"
-            const val SubtitlesSectionSubtitlesItem = "Subtitles"
-            const val SubtitlesSectionLanguageItem = "Subtitles Language"
-            const val SubtitlesSectionLanguageValue = "English"
-            const val AccountsSelectionSwitchAccountsTitle = "Switch accounts"
-            const val AccountsSelectionSwitchAccountsEmail = "jack@jetstream.com"
-            const val AccountsSelectionLogOut = "Log out"
-            const val AccountsSelectionChangePasswordTitle = "Change password"
-            const val AccountsSelectionChangePasswordValue = "••••••••••••••"
-            const val AccountsSelectionAddNewAccountTitle = "Add new account"
-            const val AccountsSelectionViewSubscriptionsTitle = "View subscriptions"
-            const val AccountsSelectionDeleteAccountTitle = "Delete account"
             const val HelpAndSupportSectionTitle = "Help and Support"
             const val HelpAndSupportSectionListItemIconDescription = "select section"
-            const val HelpAndSupportSectionFAQItem = "FAQ's"
-            const val HelpAndSupportSectionPrivacyItem = "Privacy Policy"
-            const val HelpAndSupportSectionContactItem = "Contact us on"
-            const val HelpAndSupportSectionContactValue = "support@jetstream.com"
+            const val HelpAndSupportSectionContactItem = "Contact us"
+            const val HelpAndSupportSectionContactValue = "friesoft@gmail.com"
+            const val HelpAndSupportSectionGitHubItem = "GitHub Issue Tracker"
+            const val HelpAndSupportSectionGitHubValue = "https://github.com/friesoft/lurchtv"
+            const val HelpAndSupportSectionHomepageItem = "Homepage"
+            const val HelpAndSupportSectionHomepageValue = "https://friesoft.org"
         }
 
         const val VideoPlayerControlPlaylistButton = "Playlist Button"

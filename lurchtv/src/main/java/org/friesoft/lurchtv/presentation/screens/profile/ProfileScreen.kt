@@ -147,7 +147,6 @@ fun ProfileScreen(
         }
 
         var selectedLanguageIndex by rememberSaveable { mutableIntStateOf(0) }
-        var isSubtitlesChecked by rememberSaveable { mutableStateOf(true) }
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
@@ -163,28 +162,16 @@ fun ProfileScreen(
                     false
                 },
             navController = profileNavController,
-            startDestination = ProfileScreens.Accounts(),
+            startDestination = ProfileScreens.About(),
             builder = {
-                composable(ProfileScreens.Accounts()) {
-                    AccountsSection()
-                }
                 composable(ProfileScreens.About()) {
                     AboutSection()
-                }
-                composable(ProfileScreens.Subtitles()) {
-                    SubtitlesSection(
-                        isSubtitlesChecked = isSubtitlesChecked,
-                        onSubtitleCheckChange = { isSubtitlesChecked = it }
-                    )
                 }
                 composable(ProfileScreens.Language()) {
                     LanguageSection(
                         selectedIndex = selectedLanguageIndex,
                         onSelectedIndexChange = { selectedLanguageIndex = it }
                     )
-                }
-                composable(ProfileScreens.SearchHistory()) {
-                    SearchHistorySection()
                 }
                 composable(ProfileScreens.HelpAndSupport()) {
                     HelpAndSupportSection()

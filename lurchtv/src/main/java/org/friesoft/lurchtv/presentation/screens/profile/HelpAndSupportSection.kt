@@ -27,11 +27,17 @@ fun HelpAndSupportSection() {
                 text = HelpAndSupportSectionTitle,
                 style = MaterialTheme.typography.headlineSmall
             )
-            HelpAndSupportSectionItem(title = HelpAndSupportSectionFAQItem)
-            HelpAndSupportSectionItem(title = HelpAndSupportSectionPrivacyItem)
             HelpAndSupportSectionItem(
                 title = HelpAndSupportSectionContactItem,
                 value = HelpAndSupportSectionContactValue
+            )
+            HelpAndSupportSectionItem(
+                title = HelpAndSupportSectionGitHubItem,
+                value = HelpAndSupportSectionGitHubValue
+            )
+            HelpAndSupportSectionItem(
+                title = HelpAndSupportSectionHomepageItem,
+                value = HelpAndSupportSectionHomepageValue
             )
         }
     }
