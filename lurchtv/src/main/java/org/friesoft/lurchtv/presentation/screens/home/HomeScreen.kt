@@ -13,8 +13,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +38,7 @@ fun HomeScreen(
     goToVideoPlayer: (video: Video) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     isTopBarVisible: Boolean,
+    lastWatchedVideoId: String? = null,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsStateWithLifecycle()
@@ -47,6 +53,7 @@ fun HomeScreen(
                 onScroll = onScroll,
                 goToVideoPlayer = goToVideoPlayer,
                 isTopBarVisible = isTopBarVisible,
+                lastWatchedVideoId = lastWatchedVideoId,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -56,6 +63,7 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun Catalog(
     featuredVideos: VideoList,
@@ -66,11 +74,17 @@ private fun Catalog(
     goToVideoPlayer: (video: Video) -> Unit,
     modifier: Modifier = Modifier,
     isTopBarVisible: Boolean = true,
+    lastWatchedVideoId: String? = null,
 ) {
 
     val lazyListState = rememberLazyListState()
     val childPadding = rememberChildPadding()
     var immersiveListHasFocus by remember { mutableStateOf(false) }
+
+    var lastFocusedSection by rememberSaveable { mutableStateOf<String?>(null) }
+    val carouselFocusRequester = remember { FocusRequester() }
+    val recentsFocusRequester = remember { FocusRequester() }
+    val top10FocusRequester = remember { FocusRequester() }
 
     val shouldShowTopBar by remember {
         derivedStateOf {
@@ -82,23 +96,36 @@ private fun Catalog(
     LaunchedEffect(shouldShowTopBar) {
         onScroll(shouldShowTopBar)
     }
-    LaunchedEffect(isTopBarVisible) {
-        if (isTopBarVisible) lazyListState.animateScrollToItem(0)
-    }
 
     LazyColumn(
         state = lazyListState,
         contentPadding = PaddingValues(bottom = 108.dp),
         // Setting overscan margin to bottom to ensure the last row's visibility
-        modifier = modifier,
+        modifier = modifier.focusRestorer(
+            if (lastWatchedVideoId != null) {
+                when (lastFocusedSection) {
+                    "carousel" -> carouselFocusRequester
+                    "recents" -> recentsFocusRequester
+                    "top10" -> top10FocusRequester
+                    else -> FocusRequester.Default
+                }
+            } else {
+                FocusRequester.Default
+            }
+        ),
     ) {
 
         item(contentType = "FeaturedVideosCarousel") {
             FeaturedVideosCarousel(
                 videos = featuredVideos,
                 padding = childPadding,
-                goToVideoPlayer = goToVideoPlayer,
+                goToVideoPlayer = {
+                    lastFocusedSection = "carousel"
+                    goToVideoPlayer(it)
+                },
+                lastWatchedVideoId = lastWatchedVideoId,
                 modifier = Modifier
+                    .focusRequester(carouselFocusRequester)
                     .fillMaxWidth()
                     .height(324.dp)
                 /*
@@ -111,16 +138,27 @@ private fun Catalog(
             ImmersiveVideoList(
                 videoList = recentVideos,
                 title = StringConstants.Composable.HomeScreenRecentTitle,
-                onVideoClick = onVideoClick
+                onVideoClick = {
+                    lastFocusedSection = "recents"
+                    onVideoClick(it)
+                },
+                lastWatchedVideoId = lastWatchedVideoId,
+                modifier = Modifier.focusRequester(recentsFocusRequester)
             )
         }
         item(contentType = "Top10VideosList") {
             Top10VideosList(
                 videoList = top10Videos,
-                onVideoClick = onVideoClick,
-                modifier = Modifier.onFocusChanged {
-                    immersiveListHasFocus = it.hasFocus
+                onVideoClick = {
+                    lastFocusedSection = "top10"
+                    onVideoClick(it)
                 },
+                lastWatchedVideoId = lastWatchedVideoId,
+                modifier = Modifier
+                    .focusRequester(top10FocusRequester)
+                    .onFocusChanged {
+                        immersiveListHasFocus = it.hasFocus
+                    },
             )
         }
     }

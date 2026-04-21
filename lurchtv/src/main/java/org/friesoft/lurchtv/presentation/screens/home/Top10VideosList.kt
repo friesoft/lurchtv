@@ -15,6 +15,7 @@ fun Top10VideosList(
     videoList: VideoList,
     modifier: Modifier = Modifier,
     gradientColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+    lastWatchedVideoId: String? = null,
     onVideoClick: (video: Video) -> Unit
 ) {
     ImmersiveVideoList(
@@ -23,6 +24,7 @@ fun Top10VideosList(
         modifier = modifier,
         showIndexOverImage = true,
         gradientColor = gradientColor,
+        lastWatchedVideoId = lastWatchedVideoId,
         onVideoClick = onVideoClick
     )
 }

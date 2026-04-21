@@ -3,6 +3,7 @@ package org.friesoft.lurchtv.presentation.screens.dashboard
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -68,7 +71,8 @@ fun DashboardScreen(
     openVideoPlayer: (Video) -> Unit,
     isComingBackFromDifferentScreen: Boolean,
     resetIsComingBackFromDifferentScreen: () -> Unit,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    lastWatchedVideoId: String? = null
 ) {
     val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
@@ -78,15 +82,19 @@ fun DashboardScreen(
     var isTopBarFocused by remember { mutableStateOf(false) }
 
     var currentDestination: String? by remember { mutableStateOf(null) }
-    val currentTopBarSelectedTabIndex by remember(currentDestination) {
-        derivedStateOf {
-            currentDestination?.let { TopBarTabs.indexOf(Screens.valueOf(it)) } ?: 0
-        }
-    }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) } // Default to Home tab (index 0)
 
     DisposableEffect(Unit) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             currentDestination = destination.route
+            destination.route?.let { route ->
+                val index = TopBarTabs.indexOfFirst { it.invoke() == route }
+                if (index != -1) {
+                    selectedTabIndex = index
+                } else if (route == Screens.Profile()) {
+                    selectedTabIndex = PROFILE_SCREEN_INDEX
+                }
+            }
         }
 
         navController.addOnDestinationChangedListener(listener)
@@ -94,6 +102,13 @@ fun DashboardScreen(
         onDispose {
             navController.removeOnDestinationChangedListener(listener)
         }
+    }
+
+    val bodyFocusRequester = remember { FocusRequester() }
+
+    val startDestination = remember {
+        if (selectedTabIndex == PROFILE_SCREEN_INDEX) Screens.Profile()
+        else TopBarTabs.getOrNull(selectedTabIndex)?.invoke() ?: Screens.Home()
     }
 
     BackPressHandledArea(
@@ -104,10 +119,10 @@ fun DashboardScreen(
         onBackPressed = {
             if (!isTopBarVisible) {
                 isTopBarVisible = true
-                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
-            } else if (currentTopBarSelectedTabIndex == 0) onBackPressed()
+                TopBarFocusRequesters[selectedTabIndex + 1].requestFocus()
+            } else if (selectedTabIndex == 0) onBackPressed()
             else if (!isTopBarFocused) {
-                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
+                TopBarFocusRequesters[selectedTabIndex + 1].requestFocus()
             } else TopBarFocusRequesters[1].requestFocus()
         }
     ) {
@@ -121,13 +136,7 @@ fun DashboardScreen(
         val topBarYOffsetPx by animateIntAsState(
             targetValue = if (isTopBarVisible) 0 else -topBarHeightPx,
             animationSpec = tween(),
-            label = "",
-            finishedListener = {
-                if (it == -topBarHeightPx && isComingBackFromDifferentScreen) {
-                    focusManager.moveFocus(FocusDirection.Down)
-                    resetIsComingBackFromDifferentScreen()
-                }
-            }
+            label = ""
         )
 
         // Used to push down/pull up NavHost when DashboardTopBar is shown/hidden
@@ -139,8 +148,15 @@ fun DashboardScreen(
 
         LaunchedEffect(Unit) {
             if (!wasTopBarFocusRequestedBefore) {
-                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
+                TopBarFocusRequesters[selectedTabIndex + 1].requestFocus()
                 wasTopBarFocusRequestedBefore = true
+            }
+        }
+
+        LaunchedEffect(isComingBackFromDifferentScreen) {
+            if (isComingBackFromDifferentScreen) {
+                bodyFocusRequester.requestFocus()
+                resetIsComingBackFromDifferentScreen()
             }
         }
 
@@ -158,7 +174,7 @@ fun DashboardScreen(
                     top = ParentPadding.calculateTopPadding(),
                     bottom = ParentPadding.calculateBottomPadding()
                 ),
-            selectedTabIndex = currentTopBarSelectedTabIndex,
+            selectedTabIndex = selectedTabIndex,
         ) { screen ->
             val targetRoute = screen()
             if (currentDestination != targetRoute) {
@@ -175,7 +191,12 @@ fun DashboardScreen(
             updateTopBarVisibility = { isTopBarVisible = it },
             isTopBarVisible = isTopBarVisible,
             navController = navController,
-            modifier = Modifier.offset(y = navHostTopPaddingDp),
+            modifier = Modifier
+                .offset(y = navHostTopPaddingDp)
+                .focusRequester(bodyFocusRequester)
+                .focusGroup(),
+            lastWatchedVideoId = lastWatchedVideoId,
+            startDestination = startDestination
         )
     }
 }
@@ -208,11 +229,13 @@ private fun Body(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     isTopBarVisible: Boolean = true,
+    lastWatchedVideoId: String? = null,
+    startDestination: String = Screens.Home()
 ) =
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screens.Home(),
+        startDestination = startDestination,
     ) {
         composable(Screens.Profile()) {
             ProfileScreen()
@@ -224,14 +247,17 @@ private fun Body(
                 },
                 goToVideoPlayer = openVideoPlayer,
                 onScroll = updateTopBarVisibility,
-                isTopBarVisible = isTopBarVisible
+                isTopBarVisible = isTopBarVisible,
+                lastWatchedVideoId = lastWatchedVideoId
             )
         }
+
         composable(Screens.Videothek()) {
             FavouritesScreen(
                 onVideoClick = openVideoDetailsScreen,
                 onScroll = updateTopBarVisibility,
-                isTopBarVisible = isTopBarVisible
+                isTopBarVisible = isTopBarVisible,
+                lastWatchedVideoId = lastWatchedVideoId
             )
         }
         composable(Screens.Search()) {

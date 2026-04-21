@@ -24,6 +24,7 @@ fun FavouritesScreen(
     onVideoClick: (videoId: String) -> Unit,
     onScroll: (isTopBarVisible: Boolean) -> Unit,
     isTopBarVisible: Boolean,
+    lastWatchedVideoId: String? = null,
     favouriteScreenViewModel: FavouriteScreenViewModel = hiltViewModel()
 ) {
     val uiState by favouriteScreenViewModel.uiState.collectAsStateWithLifecycle()
@@ -37,6 +38,7 @@ fun FavouritesScreen(
                 onVideoClick = onVideoClick,
                 onScroll = onScroll,
                 isTopBarVisible = isTopBarVisible,
+                lastWatchedVideoId = lastWatchedVideoId,
                 modifier = Modifier.fillMaxSize(),
                 filterList = FavouriteScreenViewModel.filterList,
                 selectedFilterList = s.selectedFilterList,
@@ -56,6 +58,7 @@ private fun Catalog(
     onSelectedFilterListUpdated: (FilterList) -> Unit,
     isTopBarVisible: Boolean,
     modifier: Modifier = Modifier,
+    lastWatchedVideoId: String? = null,
 ) {
     val childPadding = rememberChildPadding()
     val filteredVideosGridState = rememberLazyGridState()
@@ -90,7 +93,8 @@ private fun Catalog(
         FilteredVideosGrid(
             state = filteredVideosGridState,
             videoList = favouriteVideoList,
-            onVideoClick = onVideoClick
+            onVideoClick = onVideoClick,
+            lastWatchedVideoId = lastWatchedVideoId
         )
     }
 }

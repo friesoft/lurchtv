@@ -1,6 +1,5 @@
 package org.friesoft.lurchtv.presentation.common
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
@@ -64,9 +63,13 @@ fun VideosRow(
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
+    lastWatchedVideoId: String? = null,
     onVideoSelected: (video: Video) -> Unit = {}
 ) {
-    val (lazyRow, firstItem) = remember { FocusRequester.createRefs() }
+    val lazyRow = remember { FocusRequester() }
+    val videoFocusRequesters = remember(videoList) {
+        videoList.associate { it.id to FocusRequester() }
+    }
 
     Column(
         modifier = modifier.focusGroup()
@@ -80,41 +83,37 @@ fun VideosRow(
                     .padding(start = startPadding, top = 16.dp, bottom = 16.dp)
             )
         }
-        AnimatedContent(
-            targetState = videoList,
-            label = "",
-        ) { videoState ->
-            LazyRow(
-                contentPadding = PaddingValues(
-                    start = startPadding,
-                    end = endPadding,
-                ),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                modifier = Modifier
-                    .focusRequester(lazyRow)
-                    .focusRestorer {
-                        firstItem
-                    }
-            ) {
-                itemsIndexed(videoState, key = { _, video -> video.id }) { index, video ->
-                    val itemModifier = if (index == 0) {
-                        Modifier.focusRequester(firstItem)
+        LazyRow(
+            contentPadding = PaddingValues(
+                start = startPadding,
+                end = endPadding,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .focusRequester(lazyRow)
+                .focusRestorer {
+                    val lastWatchedIndex = videoList.indexOfFirst { it.id == lastWatchedVideoId }
+                    if (lastWatchedIndex != -1) {
+                        videoFocusRequesters[lastWatchedVideoId]!!
                     } else {
-                        Modifier
+                        videoFocusRequesters[videoList.firstOrNull()?.id]
+                            ?: FocusRequester.Default
                     }
-                    VideoRowItem(
-                        modifier = itemModifier,
-                        index = index,
-                        itemDirection = itemDirection,
-                        onVideoSelected = {
-                            lazyRow.saveFocusedChild()
-                            onVideoSelected(it)
-                        },
-                        video = video,
-                        showItemTitle = showItemTitle,
-                        showIndexOverImage = showIndexOverImage
-                    )
                 }
+        ) {
+            itemsIndexed(videoList, key = { _, video -> video.id }) { _, video ->
+                VideoRowItem(
+                    modifier = Modifier.focusRequester(videoFocusRequesters[video.id]!!),
+                    index = videoList.indexOf(video),
+                    itemDirection = itemDirection,
+                    onVideoSelected = {
+                        lazyRow.saveFocusedChild()
+                        onVideoSelected(it)
+                    },
+                    video = video,
+                    showItemTitle = showItemTitle,
+                    showIndexOverImage = showIndexOverImage
+                )
             }
         }
     }
@@ -135,10 +134,14 @@ fun ImmersiveListVideosRow(
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
+    lastWatchedVideoId: String? = null,
     onVideoSelected: (Video) -> Unit = {},
     onVideoFocused: (Video) -> Unit = {}
 ) {
-    val (lazyRow, firstItem) = remember { FocusRequester.createRefs() }
+    val lazyRow = remember { FocusRequester() }
+    val videoFocusRequesters = remember(videoList) {
+        videoList.associate { it.id to FocusRequester() }
+    }
 
     Column(
         modifier = modifier.focusGroup()
@@ -153,44 +156,40 @@ fun ImmersiveListVideosRow(
                     .padding(vertical = 16.dp)
             )
         }
-        AnimatedContent(
-            targetState = videoList,
-            label = "",
-        ) { videoState ->
-            LazyRow(
-                contentPadding = PaddingValues(start = startPadding, end = endPadding),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                modifier = Modifier
-                    .focusRequester(lazyRow)
-                    .focusRestorer {
-                        firstItem
-                    }
-            ) {
-                itemsIndexed(
-                    videoState,
-                    key = { _, video ->
-                        video.id
-                    }
-                ) { index, video ->
-                    val itemModifier = if (index == 0) {
-                        Modifier.focusRequester(firstItem)
+        LazyRow(
+            contentPadding = PaddingValues(start = startPadding, end = endPadding),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .focusRequester(lazyRow)
+                .focusRestorer {
+                    val lastWatchedIndex = videoList.indexOfFirst { it.id == lastWatchedVideoId }
+                    if (lastWatchedIndex != -1) {
+                        videoFocusRequesters[lastWatchedVideoId]!!
                     } else {
-                        Modifier
+                        videoFocusRequesters[videoList.firstOrNull()?.id]
+                            ?: FocusRequester.Default
                     }
-                    VideoRowItem(
-                        modifier = itemModifier,
-                        index = index,
-                        itemDirection = itemDirection,
-                        onVideoSelected = {
-                            lazyRow.saveFocusedChild()
-                            onVideoSelected(it)
-                        },
-                        onVideoFocused = onVideoFocused,
-                        video = video,
-                        showItemTitle = showItemTitle,
-                        showIndexOverImage = showIndexOverImage
-                    )
                 }
+        ) {
+            itemsIndexed(
+                videoList,
+                key = { _, video ->
+                    video.id
+                }
+            ) { _, video ->
+                VideoRowItem(
+                    modifier = Modifier.focusRequester(videoFocusRequesters[video.id]!!),
+                    index = videoList.indexOf(video),
+                    itemDirection = itemDirection,
+                    onVideoSelected = {
+                        lazyRow.saveFocusedChild()
+                        onVideoSelected(it)
+                    },
+                    onVideoFocused = onVideoFocused,
+                    video = video,
+                    showItemTitle = showItemTitle,
+                    showIndexOverImage = showIndexOverImage
+                )
             }
         }
     }

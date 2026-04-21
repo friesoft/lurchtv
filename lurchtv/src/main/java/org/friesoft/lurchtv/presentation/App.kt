@@ -23,6 +23,8 @@ fun App(
     val navController = rememberNavController()
     var isComingBackFromDifferentScreen by remember { mutableStateOf(false) }
 
+    var lastWatchedVideoId by remember { mutableStateOf<String?>(null) }
+
     NavHost(
         navController = navController,
         startDestination = Screens.Dashboard(),
@@ -37,6 +39,7 @@ fun App(
             ) {
                 VideoDetailsScreen(
                     goToVideoPlayer = { video ->
+                        lastWatchedVideoId = video.id
                         navController.navigate(Screens.VideoPlayer.withArgs(video.id))
                     },
                     refreshScreenWithNewVideo = { video ->
@@ -63,13 +66,15 @@ fun App(
                         )
                     },
                     openVideoPlayer = { video ->
+                        lastWatchedVideoId = video.id
                         navController.navigate(Screens.VideoPlayer.withArgs(video.id))
                     },
                     onBackPressed = onBackPressed,
                     isComingBackFromDifferentScreen = isComingBackFromDifferentScreen,
                     resetIsComingBackFromDifferentScreen = {
                         isComingBackFromDifferentScreen = false
-                    }
+                    },
+                    lastWatchedVideoId = lastWatchedVideoId
                 )
             }
             composable(

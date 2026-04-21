@@ -45,12 +45,16 @@ fun ImmersiveVideoList(
     showIndexOverImage: Boolean = false,
     itemDirection: ItemDirection = ItemDirection.Horizontal,
     gradientColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+    lastWatchedVideoId: String? = null,
     onVideoClick: (video: Video) -> Unit
 ) {
     if (videoList.isEmpty()) return
 
     var isListFocused by remember { mutableStateOf(false) }
-    var selectedVideo by remember(videoList) { mutableStateOf(videoList.first()) }
+    var selectedVideo by remember(videoList) {
+        val initialVideo = videoList.find { it.id == lastWatchedVideoId } ?: videoList.first()
+        mutableStateOf(initialVideo)
+    }
 
     val sectionTitle = if (isListFocused) null else title
 
@@ -95,6 +99,7 @@ fun ImmersiveVideoList(
                 showIndexOverImage = showIndexOverImage,
                 onVideoSelected = onVideoClick,
                 onVideoFocused = { selectedVideo = it },
+                lastWatchedVideoId = lastWatchedVideoId,
                 modifier = Modifier.onFocusChanged { isListFocused = it.hasFocus }
             )
         }

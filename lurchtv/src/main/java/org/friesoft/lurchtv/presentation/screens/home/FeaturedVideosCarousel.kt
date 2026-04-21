@@ -71,11 +71,16 @@ fun FeaturedVideosCarousel(
     videos: List<Video>,
     padding: Padding,
     goToVideoPlayer: (video: Video) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    lastWatchedVideoId: String? = null
 ) {
     if (videos.isEmpty()) return
 
-    val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(0) }
+    val initialIndex = remember(videos) {
+        val index = videos.indexOfFirst { it.id == lastWatchedVideoId }
+        if (index >= 0) index else 0
+    }
+    val carouselState = rememberSaveable(saver = CarouselSaver) { CarouselState(initialIndex) }
     var isCarouselFocused by remember { mutableStateOf(false) }
     val alpha = if (isCarouselFocused) {
         1f
