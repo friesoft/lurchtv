@@ -45,8 +45,10 @@ fun RowScope.VideoPlayerControllerIndicator(
     )
     var seekProgress by remember { mutableFloatStateOf(0f) }
 
-    LaunchedEffect(isSelected) {
-        onShowControls(isSelected)
+    LaunchedEffect(isSelected, isFocused) {
+        if (isSelected || isFocused) {
+            onShowControls(isSelected)
+        }
         onSeekingStatusChanged(isSelected, seekProgress)
     }
 

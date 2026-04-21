@@ -14,6 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -135,10 +137,15 @@ fun VideoPlayerScreenContent(
     })
 
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
+    var playWhenReady by remember { mutableStateOf(exoPlayer.playWhenReady) }
     DisposableEffect(exoPlayer) {
         val listener = object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
                 isPlaying = playing
+            }
+
+            override fun onPlayWhenReadyChanged(pwr: Boolean, reason: Int) {
+                playWhenReady = pwr
             }
         }
         exoPlayer.addListener(listener)
@@ -147,10 +154,22 @@ fun VideoPlayerScreenContent(
         }
     }
 
+    LaunchedEffect(playWhenReady) {
+        videoPlayerState.showControls(isPlaying = playWhenReady)
+    }
+
+    val backgroundFocusRequester = remember { FocusRequester() }
+    LaunchedEffect(videoPlayerState.isControlsVisible) {
+        if (!videoPlayerState.isControlsVisible) {
+            backgroundFocusRequester.requestFocus()
+        }
+    }
+
     val pulseState = rememberVideoPlayerPulseState()
 
     Box(
         Modifier
+            .focusRequester(backgroundFocusRequester)
             .dPadEvents(
                 exoPlayer,
                 videoPlayerState,
@@ -192,26 +211,49 @@ private fun Modifier.dPadEvents(
     exoPlayer: ExoPlayer,
     videoPlayerState: VideoPlayerState,
     pulseState: VideoPlayerPulseState
-): Modifier = this.handleDPadKeyEvents(
-    onLeft = {
-        if (!videoPlayerState.isControlsVisible) {
-            exoPlayer.seekBack()
-            pulseState.setType(BACK)
+): Modifier = this.onPreviewKeyEvent { event ->
+    if (videoPlayerState.isControlsVisible) return@onPreviewKeyEvent false
+
+    val keyCode = event.nativeKeyEvent.keyCode
+    val action = event.nativeKeyEvent.action
+
+    if (action == android.view.KeyEvent.ACTION_DOWN) {
+        when (keyCode) {
+            android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
+                exoPlayer.seekBack()
+                pulseState.setType(BACK)
+                return@onPreviewKeyEvent true
+            }
+
+            android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                exoPlayer.seekForward()
+                pulseState.setType(FORWARD)
+                return@onPreviewKeyEvent true
+            }
         }
-    },
-    onRight = {
-        if (!videoPlayerState.isControlsVisible) {
-            exoPlayer.seekForward()
-            pulseState.setType(FORWARD)
-        }
-    },
-    onUp = { videoPlayerState.showControls() },
-    onDown = { videoPlayerState.showControls() },
-    onEnter = {
-        exoPlayer.pause()
-        videoPlayerState.showControls()
     }
-)
+
+    if (action == android.view.KeyEvent.ACTION_UP) {
+        when (keyCode) {
+            android.view.KeyEvent.KEYCODE_DPAD_UP -> {
+                videoPlayerState.showControls()
+                return@onPreviewKeyEvent true
+            }
+
+            android.view.KeyEvent.KEYCODE_DPAD_DOWN -> {
+                videoPlayerState.showControls()
+                return@onPreviewKeyEvent true
+            }
+
+            android.view.KeyEvent.KEYCODE_DPAD_CENTER, android.view.KeyEvent.KEYCODE_ENTER -> {
+                exoPlayer.pause()
+                videoPlayerState.showControls()
+                return@onPreviewKeyEvent true
+            }
+        }
+    }
+    false
+}
 
 private fun VideoDetails.intoMediaItem(): MediaItem {
     return MediaItem.Builder()

@@ -31,8 +31,8 @@ fun VideoPlayerControlsIcon(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(isFocused && isPlaying) {
-        if (isFocused && isPlaying) {
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
             onShowControls(false)
         }
     }

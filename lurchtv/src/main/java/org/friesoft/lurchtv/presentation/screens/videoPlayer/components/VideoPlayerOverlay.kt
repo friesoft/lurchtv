@@ -46,10 +46,6 @@ fun VideoPlayerOverlay(
         }
     }
 
-    LaunchedEffect(isPlaying) {
-        showControls(isPlaying, false)
-    }
-
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
