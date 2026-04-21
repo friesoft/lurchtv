@@ -39,7 +39,7 @@ fun RepeatButton(
     modifier: Modifier = Modifier,
     state: RepeatButtonState = rememberRepeatButtonState(player),
     contentDescription: String? = StringConstants.Composable.VideoPlayerControlRepeatButton,
-    onShowControls: () -> Unit,
+    onShowControls: (isSeeking: Boolean) -> Unit,
 ) {
     val repeatMode = state.repeatModeState
     val isRepeating = repeatMode != Player.REPEAT_MODE_OFF

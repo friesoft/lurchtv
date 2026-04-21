@@ -175,13 +175,13 @@ fun VideoPlayerScreenContent(
             isControlsVisible = videoPlayerState.isControlsVisible,
             centerButton = { VideoPlayerPulse(pulseState) },
             subtitles = { /* TODO Implement subtitles */ },
-            showControls = videoPlayerState::showControls,
+            showControls = { playing, seeking -> videoPlayerState.showControls(playing, seeking) },
             controls = {
                 VideoPlayerControls(
                     player = exoPlayer,
                     videoDetails = videoDetails,
                     focusRequester = focusRequester,
-                    onShowControls = { videoPlayerState.showControls(isPlaying) },
+                    onShowControls = { videoPlayerState.showControls(isPlaying, it) },
                 )
             }
         )

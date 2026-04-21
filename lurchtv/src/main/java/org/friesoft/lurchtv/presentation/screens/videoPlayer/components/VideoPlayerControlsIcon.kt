@@ -25,7 +25,7 @@ fun VideoPlayerControlsIcon(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    onShowControls: () -> Unit = {},
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -33,7 +33,7 @@ fun VideoPlayerControlsIcon(
 
     LaunchedEffect(isFocused && isPlaying) {
         if (isFocused && isPlaying) {
-            onShowControls()
+            onShowControls(false)
         }
     }
 

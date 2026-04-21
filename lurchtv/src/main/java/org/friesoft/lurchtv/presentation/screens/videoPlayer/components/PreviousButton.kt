@@ -33,7 +33,7 @@ fun PreviousButton(
     player: Player,
     modifier: Modifier = Modifier,
     state: PreviousButtonState = rememberPreviousButtonState(player),
-    onShowControls: () -> Unit = {},
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
 ) {
     VideoPlayerControlsIcon(
         icon = Icons.Default.SkipPrevious,

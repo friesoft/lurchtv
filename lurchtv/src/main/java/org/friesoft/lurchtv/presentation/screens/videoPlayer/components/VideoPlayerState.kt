@@ -22,11 +22,11 @@ class VideoPlayerState(
     var isControlsVisible by mutableStateOf(true)
         private set
 
-    fun showControls(isPlaying: Boolean = true) {
-        if (isPlaying) {
-            updateControlVisibility()
-        } else {
+    fun showControls(isPlaying: Boolean = true, isSeeking: Boolean = false) {
+        if (isSeeking || !isPlaying) {
             updateControlVisibility(seconds = Int.MAX_VALUE)
+        } else {
+            updateControlVisibility()
         }
     }
 

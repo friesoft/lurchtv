@@ -35,7 +35,7 @@ fun VideoPlayerOverlay(
     modifier: Modifier = Modifier,
     isControlsVisible: Boolean = true,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    showControls: () -> Unit = {},
+    showControls: (isPlaying: Boolean, isSeeking: Boolean) -> Unit = { _, _ -> },
     centerButton: @Composable () -> Unit = {},
     subtitles: @Composable () -> Unit = {},
     controls: @Composable () -> Unit = {}
@@ -47,7 +47,7 @@ fun VideoPlayerOverlay(
     }
 
     LaunchedEffect(isPlaying) {
-        showControls()
+        showControls(isPlaying, false)
     }
 
     Box(

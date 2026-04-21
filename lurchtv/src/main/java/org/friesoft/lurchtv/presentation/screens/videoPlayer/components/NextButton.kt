@@ -33,7 +33,7 @@ fun NextButton(
     player: Player,
     modifier: Modifier = Modifier,
     state: NextButtonState = rememberNextButtonState(player),
-    onShowControls: () -> Unit = {},
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
 ) {
     VideoPlayerControlsIcon(
         icon = Icons.Default.SkipNext,

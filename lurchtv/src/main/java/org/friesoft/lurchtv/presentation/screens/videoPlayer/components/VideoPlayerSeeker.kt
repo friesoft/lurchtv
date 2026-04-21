@@ -9,13 +9,16 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.PlayPauseButtonState
@@ -34,12 +37,17 @@ fun VideoPlayerSeeker(
     onSeek: (Float) -> Unit = {
         player.seekTo(player.duration.times(it).toLong())
     },
-    onShowControls: () -> Unit = {},
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
 ) {
-    val contentDuration = player.contentDuration.milliseconds
+    val contentDurationMs = player.contentDuration
+    val isDurationValid = contentDurationMs != C.TIME_UNSET
+    val contentDuration = if (isDurationValid) contentDurationMs.milliseconds else kotlin.time.Duration.INFINITE
 
     var currentPositionMs by remember(player) { mutableLongStateOf(0L) }
     val currentPosition = currentPositionMs.milliseconds
+
+    var isSeeking by remember { mutableStateOf(false) }
+    var seekProgress by remember { mutableFloatStateOf(0f) }
 
     // TODO: Update in a more thoughtful manner
     LaunchedEffect(Unit) {
@@ -49,22 +57,24 @@ fun VideoPlayerSeeker(
         }
     }
 
-    val contentProgressString =
-        currentPosition.toComponents { h, m, s, _ ->
+    fun formatTime(duration: kotlin.time.Duration): String {
+        if (duration.isInfinite()) return "--:--"
+        return duration.toComponents { h, m, s, _ ->
             if (h > 0) {
                 "$h:${m.padStartWith0()}:${s.padStartWith0()}"
             } else {
                 "${m.padStartWith0()}:${s.padStartWith0()}"
             }
         }
-    val contentDurationString =
-        contentDuration.toComponents { h, m, s, _ ->
-            if (h > 0) {
-                "$h:${m.padStartWith0()}:${s.padStartWith0()}"
-            } else {
-                "${m.padStartWith0()}:${s.padStartWith0()}"
-            }
-        }
+    }
+
+    val contentProgressString = formatTime(currentPosition)
+    val contentDurationString = formatTime(contentDuration)
+    val seekProgressString = if (isDurationValid && !contentDuration.isInfinite()) {
+        formatTime(contentDuration.times(seekProgress.toDouble()))
+    } else {
+        "--:--"
+    }
 
     Row(
         modifier = modifier,
@@ -79,11 +89,19 @@ fun VideoPlayerSeeker(
                 .Composable
                 .VideoPlayerControlPlayPauseButton
         )
-        VideoPlayerControllerText(text = contentProgressString)
+        VideoPlayerControllerText(text = if (isSeeking) seekProgressString else contentProgressString)
         VideoPlayerControllerIndicator(
-            progress = (currentPosition / contentDuration).toFloat(),
+            progress = if (isDurationValid && contentDuration.inWholeMilliseconds > 0) {
+                (currentPosition / contentDuration).toFloat()
+            } else {
+                0f
+            },
             onSeek = onSeek,
-            onShowControls = onShowControls
+            onShowControls = onShowControls,
+            onSeekingStatusChanged = { seeking, progress ->
+                isSeeking = seeking
+                seekProgress = progress
+            }
         )
         VideoPlayerControllerText(text = contentDurationString)
     }

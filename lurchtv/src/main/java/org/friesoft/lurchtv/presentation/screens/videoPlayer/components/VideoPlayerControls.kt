@@ -16,14 +16,8 @@
 
 package org.friesoft.lurchtv.presentation.screens.videoPlayer.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import org.friesoft.lurchtv.data.entities.VideoDetails
 
@@ -32,7 +26,7 @@ fun VideoPlayerControls(
     player: Player,
     videoDetails: VideoDetails,
     focusRequester: FocusRequester,
-    onShowControls: () -> Unit = {},
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
 ) {
     VideoPlayerMainFrame(
         mediaTitle = {
@@ -43,22 +37,7 @@ fun VideoPlayerControls(
                 type = VideoPlayerMediaTitleType.DEFAULT
             )
         },
-        mediaActions = {
-            Row(
-                modifier = Modifier.padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                PreviousButton(
-                    player = player,
-                    onShowControls = onShowControls
-                )
-                NextButton(
-                    player = player,
-                    onShowControls = onShowControls
-                )
-            }
-        },
+        mediaActions = {},
         seeker = {
             VideoPlayerSeeker(
                 player = player,
