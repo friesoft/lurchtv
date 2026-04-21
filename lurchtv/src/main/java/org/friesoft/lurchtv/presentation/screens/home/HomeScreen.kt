@@ -21,12 +21,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoList
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.common.Error
 import org.friesoft.lurchtv.presentation.common.ImmersiveVideoList
 import org.friesoft.lurchtv.presentation.common.Loading
@@ -137,7 +138,7 @@ private fun Catalog(
         item(contentType = "ImmersiveVideoList") {
             ImmersiveVideoList(
                 videoList = recentVideos,
-                title = StringConstants.Composable.HomeScreenRecentTitle,
+                title = stringResource(id = R.string.home_screen_recent_title),
                 onVideoClick = {
                     lastFocusedSection = "recents"
                     onVideoClick(it)

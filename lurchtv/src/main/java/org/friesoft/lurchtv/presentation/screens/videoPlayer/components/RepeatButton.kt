@@ -30,7 +30,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.RepeatButtonState
 import androidx.media3.ui.compose.state.rememberRepeatButtonState
 import androidx.tv.material3.LocalContentColor
-import org.friesoft.lurchtv.data.util.StringConstants
+import androidx.compose.ui.res.stringResource
+import org.friesoft.lurchtv.R
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -38,7 +39,7 @@ fun RepeatButton(
     player: Player,
     modifier: Modifier = Modifier,
     state: RepeatButtonState = rememberRepeatButtonState(player),
-    contentDescription: String? = StringConstants.Composable.VideoPlayerControlRepeatButton,
+    contentDescription: String? = stringResource(id = R.string.video_player_control_repeat_button),
     onShowControls: (isSeeking: Boolean) -> Unit,
 ) {
     val repeatMode = state.repeatModeState

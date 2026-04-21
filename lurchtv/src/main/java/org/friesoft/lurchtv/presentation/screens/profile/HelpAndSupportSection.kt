@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
@@ -15,31 +16,30 @@ import androidx.tv.material3.ListItemDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import androidx.tv.material3.surfaceColorAtElevation
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun HelpAndSupportSection() {
-    with(StringConstants.Composable.Placeholders) {
-        Column(modifier = Modifier.padding(horizontal = 72.dp)) {
-            Text(
-                text = HelpAndSupportSectionTitle,
-                style = MaterialTheme.typography.headlineSmall
-            )
-            HelpAndSupportSectionItem(
-                title = HelpAndSupportSectionContactItem,
-                value = HelpAndSupportSectionContactValue
-            )
-            HelpAndSupportSectionItem(
-                title = HelpAndSupportSectionGitHubItem,
-                value = HelpAndSupportSectionGitHubValue
-            )
-            HelpAndSupportSectionItem(
-                title = HelpAndSupportSectionHomepageItem,
-                value = HelpAndSupportSectionHomepageValue
-            )
-        }
+    Column(modifier = Modifier.padding(horizontal = 72.dp)) {
+        Text(
+            text = stringResource(id = R.string.help_and_support_section_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        HelpAndSupportSectionItem(
+            title = stringResource(id = R.string.help_and_support_section_contact_item),
+            value = StringConstants.Composable.Placeholders.HelpAndSupportSectionContactValue
+        )
+        HelpAndSupportSectionItem(
+            title = stringResource(id = R.string.help_and_support_section_github_item),
+            value = StringConstants.Composable.Placeholders.HelpAndSupportSectionGitHubValue
+        )
+        HelpAndSupportSectionItem(
+            title = stringResource(id = R.string.help_and_support_section_homepage_item),
+            value = StringConstants.Composable.Placeholders.HelpAndSupportSectionHomepageValue
+        )
     }
 }
 
@@ -62,10 +62,7 @@ private fun HelpAndSupportSectionItem(
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowForwardIos,
                     modifier = Modifier.size(ListItemDefaults.IconSizeDense),
-                    contentDescription = StringConstants
-                        .Composable
-                        .Placeholders
-                        .HelpAndSupportSectionListItemIconDescription
+                    contentDescription = stringResource(id = R.string.help_and_support_section_list_item_icon_description)
                 )
             }
         },

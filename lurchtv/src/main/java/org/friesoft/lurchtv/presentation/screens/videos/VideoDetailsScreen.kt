@@ -12,14 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.MaterialTheme
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.entities.toVideo
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.common.Error
 import org.friesoft.lurchtv.presentation.common.ImmersiveVideoList
 import org.friesoft.lurchtv.presentation.common.Loading
@@ -85,9 +86,10 @@ private fun Details(
         if (videoDetails.similarVideos.isNotEmpty()) {
             item {
                 ImmersiveVideoList(
-                    title = StringConstants
-                        .Composable
-                        .videoDetailsScreenSimilarTo(videoDetails.name),
+                    title = stringResource(
+                        id = R.string.video_details_screen_similar_to,
+                        videoDetails.name
+                    ),
                     videoList = videoDetails.similarVideos,
                     onVideoClick = refreshScreenWithNewVideo
                 )

@@ -146,7 +146,6 @@ fun ProfileScreen(
             }
         }
 
-        var selectedLanguageIndex by rememberSaveable { mutableIntStateOf(0) }
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
@@ -168,10 +167,7 @@ fun ProfileScreen(
                     AboutSection()
                 }
                 composable(ProfileScreens.Language()) {
-                    LanguageSection(
-                        selectedIndex = selectedLanguageIndex,
-                        onSelectedIndexChange = { selectedLanguageIndex = it }
-                    )
+                    LanguageSection()
                 }
                 composable(ProfileScreens.HelpAndSupport()) {
                     HelpAndSupportSection()

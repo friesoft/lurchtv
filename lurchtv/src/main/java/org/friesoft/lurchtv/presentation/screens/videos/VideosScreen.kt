@@ -11,12 +11,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoList
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.common.Loading
 import org.friesoft.lurchtv.presentation.common.VideosRow
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
@@ -83,7 +84,7 @@ private fun Catalog(
         item {
             VideosRow(
                 modifier = Modifier.padding(top = childPadding.top),
-                title = StringConstants.Composable.PopularFilmsThisWeekTitle,
+                title = stringResource(id = R.string.popular_videos_this_week_title),
                 videoList = popularFilmsThisWeek,
                 onVideoSelected = onVideoClick
             )

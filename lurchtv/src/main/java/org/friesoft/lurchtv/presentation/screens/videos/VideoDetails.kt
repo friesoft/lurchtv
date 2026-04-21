@@ -40,7 +40,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.VideoDetails
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 import org.friesoft.lurchtv.presentation.theme.LurchTVButtonShape
 import kotlinx.coroutines.launch
@@ -185,10 +184,10 @@ private fun VideoImageWithGradients(
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current).data(videoDetails.posterUri)
             .crossfade(true).build(),
-        contentDescription = StringConstants
-            .Composable
-            .ContentDescription
-            .videoPoster(videoDetails.name),
+        contentDescription = stringResource(
+            id = R.string.video_poster_content_description,
+            videoDetails.name
+        ),
         contentScale = ContentScale.Crop,
         modifier = modifier.drawWithContent {
             drawContent()

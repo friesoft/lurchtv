@@ -14,8 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import androidx.compose.ui.res.stringResource
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
-import org.friesoft.lurchtv.data.util.StringConstants
 
 @Composable
 fun PosterImage(
@@ -29,7 +30,7 @@ fun PosterImage(
                 .crossfade(true)
                 .data(video.posterUri)
                 .build(),
-            contentDescription = StringConstants.Composable.ContentDescription.videoPoster(video.name),
+            contentDescription = stringResource(id = R.string.video_poster_content_description, video.name),
             contentScale = ContentScale.Crop
         )
         

@@ -25,7 +25,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.PreviousButtonState
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
-import org.friesoft.lurchtv.data.util.StringConstants
+import androidx.compose.ui.res.stringResource
+import org.friesoft.lurchtv.R
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -39,7 +40,7 @@ fun PreviousButton(
         icon = Icons.Default.SkipPrevious,
         isPlaying = player.isPlaying,
         contentDescription =
-        StringConstants.Composable.VideoPlayerControlSkipPreviousButton,
+        stringResource(id = R.string.video_player_control_skip_previous_button),
         onShowControls = onShowControls,
         onClick = state::onClick,
         modifier = modifier,

@@ -18,12 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.PlayPauseButtonState
 import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
-import org.friesoft.lurchtv.data.util.StringConstants
+import org.friesoft.lurchtv.R
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 
@@ -85,9 +86,7 @@ fun VideoPlayerSeeker(
             icon = if (state.showPlay) Icons.Default.PlayArrow else Icons.Default.Pause,
             onClick = state::onClick,
             isPlaying = player.isPlaying,
-            contentDescription = StringConstants
-                .Composable
-                .VideoPlayerControlPlayPauseButton
+            contentDescription = stringResource(id = R.string.video_player_control_play_pause_button)
         )
         VideoPlayerControllerText(text = if (isSeeking) seekProgressString else contentProgressString)
         VideoPlayerControllerIndicator(

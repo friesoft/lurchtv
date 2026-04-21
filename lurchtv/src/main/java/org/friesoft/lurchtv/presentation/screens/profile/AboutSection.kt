@@ -13,10 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import org.friesoft.lurchtv.data.util.StringConstants
+import org.friesoft.lurchtv.R
 
 @Composable
 fun AboutSection() {
@@ -25,40 +26,38 @@ fun AboutSection() {
         context.getVersionNumber()
     }
 
-    with(StringConstants.Composable.Placeholders) {
-        Column(modifier = Modifier.padding(horizontal = 72.dp)) {
-            Text(
-                text = AboutSectionTitle,
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Text(
-                modifier = Modifier
-                    .graphicsLayer { alpha = 0.8f }
-                    .padding(top = 16.dp),
-                text = AboutSectionDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Box(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth()
-                    .height(2.dp)
-                    .background(MaterialTheme.colorScheme.border.copy(alpha = 0.6f))
-            )
-            Text(
-                modifier = Modifier
-                    .graphicsLayer { alpha = 0.6f }
-                    .padding(top = 16.dp),
-                text = AboutSectionAppVersionTitle,
-                style = MaterialTheme.typography.labelMedium
-            )
-            Text(
-                modifier = Modifier.padding(top = 8.dp),
-                text = versionNumber,
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
+    Column(modifier = Modifier.padding(horizontal = 72.dp)) {
+        Text(
+            text = stringResource(id = R.string.about_section_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(
+            modifier = Modifier
+                .graphicsLayer { alpha = 0.8f }
+                .padding(top = 16.dp),
+            text = stringResource(id = R.string.about_section_description),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Box(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
+                .height(2.dp)
+                .background(MaterialTheme.colorScheme.border.copy(alpha = 0.6f))
+        )
+        Text(
+            modifier = Modifier
+                .graphicsLayer { alpha = 0.6f }
+                .padding(top = 16.dp),
+            text = stringResource(id = R.string.about_section_app_version_title),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = versionNumber,
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }
 

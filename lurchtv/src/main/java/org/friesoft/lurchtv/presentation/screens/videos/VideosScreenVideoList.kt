@@ -34,8 +34,9 @@ import androidx.tv.material3.CompactCard
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
+import androidx.compose.ui.res.stringResource
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
 import org.friesoft.lurchtv.presentation.theme.LurchTVBorderWidth
 
@@ -105,10 +106,10 @@ private fun VideoListItem(
                 )
                 AsyncImage(
                     model = video.posterUri,
-                    contentDescription = StringConstants
-                        .Composable
-                        .ContentDescription
-                        .videoPoster(video.name),
+                    contentDescription = stringResource(
+                        id = R.string.video_poster_content_description,
+                        video.name
+                    ),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()

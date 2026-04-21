@@ -42,7 +42,6 @@ import androidx.tv.material3.Tab
 import androidx.tv.material3.TabRow
 import androidx.tv.material3.Text
 import org.friesoft.lurchtv.R
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.screens.Screens
 import org.friesoft.lurchtv.presentation.theme.IconSize
 import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
@@ -67,6 +66,7 @@ fun DashboardTopBar(
     onScreenSelection: (screen: Screens) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val userAvatarContentDescription = stringResource(id = R.string.user_avatar_content_description)
     Box(modifier = modifier) {
         Row(
             modifier = Modifier
@@ -115,8 +115,7 @@ fun DashboardTopBar(
                                     Icon(
                                         screen.tabIcon,
                                         modifier = Modifier.padding(4.dp),
-                                        contentDescription = StringConstants.Composable
-                                            .ContentDescription.DashboardSearchButton,
+                                        contentDescription = stringResource(id = R.string.dashboard_search_button_content_description),
                                         tint = LocalContentColor.current
                                     )
                                 } else {
@@ -149,8 +148,7 @@ fun DashboardTopBar(
                         contentFocusRequester?.let { down = it }
                     }
                     .semantics {
-                        contentDescription =
-                            StringConstants.Composable.ContentDescription.UserAvatar
+                        contentDescription = userAvatarContentDescription
                     },
                 selected = selectedTabIndex == PROFILE_SCREEN_INDEX,
                 onClick = {
@@ -171,8 +169,7 @@ private fun LurchTVLogo(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = StringConstants.Composable
-                .ContentDescription.BrandLogoImage,
+            contentDescription = stringResource(id = R.string.brand_logo_image_content_description),
             modifier = Modifier
                 .padding(end = 4.dp)
                 .size(IconSize),

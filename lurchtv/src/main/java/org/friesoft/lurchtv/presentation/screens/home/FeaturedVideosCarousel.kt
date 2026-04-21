@@ -53,7 +53,6 @@ import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
-import org.friesoft.lurchtv.data.util.StringConstants
 import org.friesoft.lurchtv.presentation.theme.LurchTVBorderWidth
 import org.friesoft.lurchtv.presentation.theme.LurchTVButtonShape
 import org.friesoft.lurchtv.presentation.utils.Padding
@@ -88,6 +87,7 @@ fun FeaturedVideosCarousel(
         0f
     }
 
+    val videosCarouselContentDescription = stringResource(id = R.string.videos_carousel_content_description)
     Carousel(
         modifier = modifier
             .padding(start = padding.start, end = padding.start, top = padding.top)
@@ -102,8 +102,7 @@ fun FeaturedVideosCarousel(
                 isCarouselFocused = it.hasFocus
             }
             .semantics {
-                contentDescription =
-                    StringConstants.Composable.ContentDescription.VideosCarousel
+                contentDescription = videosCarouselContentDescription
             }
             .handleDPadKeyEvents(onEnter = {
                 goToVideoPlayer(videos[carouselState.activeItemIndex])
@@ -219,10 +218,10 @@ private fun CarouselItemForeground(
 private fun CarouselItemBackground(video: Video, modifier: Modifier = Modifier) {
     AsyncImage(
         model = video.posterUri,
-        contentDescription = StringConstants
-            .Composable
-            .ContentDescription
-            .videoPoster(video.name),
+        contentDescription = stringResource(
+            id = R.string.video_poster_content_description,
+            video.name
+        ),
         modifier = modifier
             .drawWithContent {
                 drawContent()

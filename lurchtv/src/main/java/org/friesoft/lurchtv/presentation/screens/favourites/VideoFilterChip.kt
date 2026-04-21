@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -24,7 +25,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.ProvideTextStyle
 import androidx.tv.material3.Text
-import org.friesoft.lurchtv.data.util.StringConstants
+import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -59,8 +60,7 @@ fun VideoFilterChip(
             AnimatedVisibility(visible = isChecked) {
                 Icon(
                     Icons.Default.Check,
-                    contentDescription =
-                    StringConstants.Composable.ContentDescription.FilterSelected,
+                    contentDescription = stringResource(id = R.string.filter_selected_content_description),
                     modifier = Modifier.size(16.dp)
                 )
             }
