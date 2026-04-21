@@ -1,6 +1,7 @@
 
 package org.friesoft.lurchtv.presentation.common
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +17,7 @@ fun Loading(
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.displayMedium
 ) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.focusable(), contentAlignment = Alignment.Center) {
         Text(
             text = stringResource(id = R.string.message_loading),
             style = style

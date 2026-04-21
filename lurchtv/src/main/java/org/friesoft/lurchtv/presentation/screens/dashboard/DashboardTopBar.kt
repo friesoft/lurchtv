@@ -23,10 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -60,6 +63,7 @@ fun DashboardTopBar(
     selectedTabIndex: Int,
     screens: List<Screens> = TopBarTabs,
     focusRequesters: List<FocusRequester> = remember { TopBarFocusRequesters },
+    contentFocusRequester: FocusRequester? = null,
     onScreenSelection: (screen: Screens) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -72,25 +76,11 @@ fun DashboardTopBar(
                 .focusRestorer(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            UserAvatar(
-                modifier = Modifier
-                    .size(32.dp)
-                    .focusRequester(focusRequesters[0])
-                    .semantics {
-                        contentDescription =
-                            StringConstants.Composable.ContentDescription.UserAvatar
-                    },
-                selected = selectedTabIndex == PROFILE_SCREEN_INDEX,
-                onClick = {
-                    onScreenSelection(Screens.Profile)
-                }
-            )
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 var isTabRowFocused by remember { mutableStateOf(false) }
 
-                Spacer(modifier = Modifier.width(20.dp))
                 TabRow(
                     modifier = Modifier
                         .onFocusChanged {
@@ -113,7 +103,10 @@ fun DashboardTopBar(
                             Tab(
                                 modifier = Modifier
                                     .height(32.dp)
-                                    .focusRequester(focusRequesters[index + 1]),
+                                    .focusRequester(focusRequesters[index + 1])
+                                    .focusProperties {
+                                        contentFocusRequester?.let { down = it }
+                                    },
                                 selected = index == selectedTabIndex,
                                 onFocus = { onScreenSelection(screen) },
                                 onClick = { focusManager.moveFocus(FocusDirection.Down) },
@@ -146,7 +139,23 @@ fun DashboardTopBar(
             LurchTVLogo(
                 modifier = Modifier
                     .alpha(0.75f)
-                    .padding(end = 8.dp),
+                    .padding(end = 16.dp),
+            )
+            UserAvatar(
+                modifier = Modifier
+                    .size(32.dp)
+                    .focusRequester(focusRequesters[0])
+                    .focusProperties {
+                        contentFocusRequester?.let { down = it }
+                    }
+                    .semantics {
+                        contentDescription =
+                            StringConstants.Composable.ContentDescription.UserAvatar
+                    },
+                selected = selectedTabIndex == PROFILE_SCREEN_INDEX,
+                onClick = {
+                    onScreenSelection(Screens.Profile)
+                }
             )
         }
     }
@@ -161,12 +170,13 @@ private fun LurchTVLogo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            Icons.Default.PlayCircle,
+            painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = StringConstants.Composable
                 .ContentDescription.BrandLogoImage,
             modifier = Modifier
                 .padding(end = 4.dp)
-                .size(IconSize)
+                .size(IconSize),
+            tint = Color.Unspecified
         )
         Text(
             text = stringResource(R.string.brand_logo_text),

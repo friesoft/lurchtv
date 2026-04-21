@@ -1,5 +1,7 @@
 package org.friesoft.lurchtv.presentation.screens.dashboard
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -175,6 +177,7 @@ fun DashboardScreen(
                     bottom = ParentPadding.calculateBottomPadding()
                 ),
             selectedTabIndex = selectedTabIndex,
+            contentFocusRequester = bodyFocusRequester,
         ) { screen ->
             val targetRoute = screen()
             if (currentDestination != targetRoute) {
@@ -236,6 +239,8 @@ private fun Body(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
     ) {
         composable(Screens.Profile()) {
             ProfileScreen()

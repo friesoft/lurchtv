@@ -240,10 +240,12 @@ private fun CarouselItemBackground(video: Video, modifier: Modifier = Modifier) 
 }
 
 @Composable
-private fun WatchNowButton() {
+private fun WatchNowButton(
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = {},
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = modifier.padding(top = 8.dp),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         shape = ButtonDefaults.shape(shape = LurchTVButtonShape),
         colors = ButtonDefaults.colors(
