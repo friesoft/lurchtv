@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.os.LocaleListCompat
 import androidx.tv.material3.Icon
 import androidx.tv.material3.ListItem
@@ -23,11 +23,11 @@ import org.friesoft.lurchtv.presentation.theme.LurchTVCardShape
 
 @Composable
 fun LanguageSection() {
-    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val currentLocale = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
         AppCompatDelegate.getApplicationLocales()[0]?.language
     } else {
-        context.resources.configuration.locales[0].language
+        configuration.locales[0].language
     }
     val items = StringConstants.Composable.Placeholders.LanguageSectionItems
     val locales = listOf("de", "en")
