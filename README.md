@@ -7,6 +7,17 @@ This application is **fully vibecoded**. It is provided "as is" without any guar
 
 ---
 
+## Screenshots
+| Home (Featured) | Home (Recent) | Home (Top 10) |
+| :---: | :---: | :---: |
+| ![Home Featured](docs/screenshots/home_featured.png) | ![Home Recent](docs/screenshots/home_recent.png) | ![Home Top 10](docs/screenshots/home_top10.png) |
+
+| Videothek | Search | Video Details |
+| :---: | :---: | :---: |
+| ![Videothek Grid](docs/screenshots/videothek_grid.png) | ![Search Results](docs/screenshots/search_results.png) | ![Video Details](docs/screenshots/video_details.png) |
+
+---
+
 ## About
 LurchTV brings the Gronkh.tv stream archive and VODs to your Android TV with a modern, immersive interface.
 
