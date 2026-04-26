@@ -2,10 +2,6 @@ package org.friesoft.lurchtv.data.util
 
 object StringConstants {
 
-    object Assets {
-        const val VideoCategories = "videoCategories.json"
-    }
-
     object Exceptions {
         const val UnknownException = "Unknown Exception!"
         const val InvalidCategoryId = "Invalid category ID!"

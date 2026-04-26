@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
-import org.friesoft.lurchtv.data.entities.VideoCategoryDetails
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.data.entities.ThumbnailType
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.map
 @Singleton
 class VideoRepositoryImpl @Inject constructor(
     private val videoDataSource: VideoDataSource,
-    private val videoCategoryDataSource: VideoCategoryDataSource,
     private val apiService: GronkhApiService,
     private val dataStore: DataStore<Preferences>
 ) : VideoRepository {
@@ -38,24 +36,6 @@ class VideoRepositoryImpl @Inject constructor(
     override fun getTop10Videos(): Flow<VideoList> = flow {
         val list = videoDataSource.getTop10VideoList()
         emit(list)
-    }
-
-    override fun getVideoCategories() = flow {
-        val list = videoCategoryDataSource.getVideoCategoryList()
-        emit(list)
-    }
-
-    override suspend fun getVideoCategoryDetails(categoryId: String): VideoCategoryDetails {
-        val categoryList = videoCategoryDataSource.getVideoCategoryList()
-        val category = categoryList.find { categoryId == it.id } ?: categoryList.first()
-
-        val videoList = videoDataSource.getVideoList().shuffled().take(20)
-
-        return VideoCategoryDetails(
-            id = category.id,
-            name = category.name,
-            videos = videoList
-        )
     }
 
     override suspend fun getVideoDetails(videoId: String): VideoDetails {
