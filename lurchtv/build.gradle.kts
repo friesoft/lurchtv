@@ -9,12 +9,12 @@ plugins {
 android {
     namespace = "org.friesoft.lurchtv"
     // Needed for latest androidx snapshot build
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "org.friesoft.lurchtv"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
 
         // Parse semantic version for robust versionCode calculation
         val versionStr = project.version.toString()
