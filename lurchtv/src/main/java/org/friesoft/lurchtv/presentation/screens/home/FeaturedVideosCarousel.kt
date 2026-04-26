@@ -178,7 +178,7 @@ private fun CarouselItemForeground(
         ) {
             Text(
                 text = video.name,
-                style = MaterialTheme.typography.displayMedium.copy(
+                style = MaterialTheme.typography.headlineLarge.copy(
                     shadow = Shadow(
                         color = Color.Black.copy(alpha = 0.5f),
                         offset = Offset(x = 2f, y = 4f),

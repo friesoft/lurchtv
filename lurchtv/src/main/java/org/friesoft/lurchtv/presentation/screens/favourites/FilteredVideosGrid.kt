@@ -96,9 +96,9 @@ fun GridVideoItem(
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Text(
                     text = video.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 20.sp
+                        lineHeight = 12.sp
                     ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

@@ -87,8 +87,7 @@ private fun Details(
             item {
                 ImmersiveVideoList(
                     title = stringResource(
-                        id = R.string.video_details_screen_similar_to,
-                        videoDetails.name
+                        id = R.string.video_details_screen_similar_to
                     ),
                     videoList = videoDetails.similarVideos,
                     onVideoClick = refreshScreenWithNewVideo

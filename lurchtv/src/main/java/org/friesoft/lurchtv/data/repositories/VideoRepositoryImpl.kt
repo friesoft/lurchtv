@@ -50,11 +50,13 @@ class VideoRepositoryImpl @Inject constructor(
                 videoUri = playlist.playlistUrl,
                 posterUri = info.previewUrl,
                 name = info.title,
-                description = "Aufgerufen: ${info.views} mal.\nVeröffentlicht am: ${info.createdAt}",
+                description = "", 
                 releaseDate = info.createdAt.take(10), // e.g., 2024-11-20
                 categories = info.chapters.mapNotNull { it.game?.title }.distinct(),
                 duration = "${info.sourceLength / 60}m",
                 videoLength = info.sourceLength,
+                views = info.views,
+                createdAt = info.createdAt,
                 similarVideos = videoDataSource.getVideoList().take(3),
             )
         } catch (e: Exception) {
@@ -76,6 +78,8 @@ class VideoRepositoryImpl @Inject constructor(
             releaseDate = "2024 (DE)",
             categories = listOf("Gaming"),
             duration = "Unknown",
+            views = video.views,
+            createdAt = video.createdAt,
             similarVideos = similarVideoList,
         )
     }

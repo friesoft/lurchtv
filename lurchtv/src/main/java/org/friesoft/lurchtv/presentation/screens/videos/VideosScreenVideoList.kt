@@ -129,7 +129,7 @@ private fun VideoListItem(
                     )
                     Text(
                         text = video.name,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(
                             start = 24.dp,
                             end = 24.dp,

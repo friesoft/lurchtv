@@ -65,17 +65,29 @@ fun VideoDetails(
             modifier = Modifier.fillMaxSize()
         )
 
-        Column(modifier = Modifier.fillMaxWidth(0.55f)) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.height(108.dp))
             Column(
-                modifier = Modifier.padding(start = childPadding.start)
+                modifier = Modifier.padding(
+                    start = childPadding.start,
+                    end = childPadding.end
+                )
             ) {
                 VideoLargeTitle(videoTitle = videoDetails.name)
 
                 Column(
-                    modifier = Modifier.alpha(0.75f)
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .alpha(0.75f)
                 ) {
-                    VideoDescription(description = videoDetails.description)
+                    val description = videoDetails.description.ifEmpty {
+                        stringResource(
+                            R.string.video_details_views_count,
+                            videoDetails.views.toString(),
+                            videoDetails.createdAt.take(10)
+                        )
+                    }
+                    VideoDescription(description = description)
                     DotSeparatedRow(
                         modifier = Modifier.padding(top = 20.dp),
                         texts = listOf(
@@ -96,7 +108,7 @@ fun VideoDetails(
                         }
                         
                         Text(
-                            text = "Gesehen bis: $posText",
+                            text = stringResource(R.string.video_details_watched_until, posText),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(top = 8.dp)
                         )
@@ -168,10 +180,9 @@ private fun VideoDescription(description: String) {
 private fun VideoLargeTitle(videoTitle: String) {
     Text(
         text = videoTitle,
-        style = MaterialTheme.typography.displayMedium.copy(
+        style = MaterialTheme.typography.headlineMedium.copy(
             fontWeight = FontWeight.Bold
-        ),
-        maxLines = 1
+        )
     )
 }
 

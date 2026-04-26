@@ -39,7 +39,7 @@ fun VideoPlayerMediaTitle(
         append(tertiaryText)
     }
     Column(modifier.fillMaxWidth()) {
-        Text(title, style = MaterialTheme.typography.headlineMedium)
+        Text(title, style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(4.dp))
         Row {
             // TODO: Replaced with Badge component once developed
@@ -47,7 +47,7 @@ fun VideoPlayerMediaTitle(
                 VideoPlayerMediaTitleType.AD -> {
                     Text(
                         text = stringResource(R.string.ad),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.labelSmall,
                         color = Color.Black,
                         modifier = Modifier
                             .background(Color(0xFFFBC02D), shape = RoundedCornerShape(12.dp))
@@ -60,7 +60,7 @@ fun VideoPlayerMediaTitle(
                 VideoPlayerMediaTitleType.LIVE -> {
                     Text(
                         text = stringResource(R.string.live),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.inverseSurface,
                         modifier = Modifier
                             .background(Color(0xFFCC0000), shape = RoundedCornerShape(12.dp))
@@ -76,7 +76,7 @@ fun VideoPlayerMediaTitle(
 
             Text(
                 text = subTitle,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.alignByBaseline()
             )
         }

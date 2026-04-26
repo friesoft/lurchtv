@@ -32,7 +32,9 @@
     <!-- Home Section -->
     <string name="home_screen_recent_title">Zuletzt angesehen</string>
     <string name="popular_videos_this_week_title">Beliebte Videos diese Woche</string>
-    <string name="video_details_screen_similar_to">Ähnlich wie %s</string>
+    <string name="video_details_screen_similar_to">Ähnlich wie dieses Video</string>
+    <string name="video_details_watched_until">Gesehen bis: %s</string>
+    <string name="video_details_views_count">Aufgerufen: %1$s mal.\nVeröffentlicht am: %2$s</string>
 
     <!-- Content Description -->
     <string name="video_poster_content_description">Video-Poster von %s</string>

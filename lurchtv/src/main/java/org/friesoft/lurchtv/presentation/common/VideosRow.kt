@@ -57,9 +57,9 @@ fun VideosRow(
     startPadding: Dp = rememberChildPadding().start,
     endPadding: Dp = rememberChildPadding().end,
     title: String? = null,
-    titleStyle: TextStyle = MaterialTheme.typography.headlineLarge.copy(
+    titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontWeight = FontWeight.Medium,
-        fontSize = 30.sp
+        fontSize = 24.sp
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
@@ -128,9 +128,9 @@ fun ImmersiveListVideosRow(
     startPadding: Dp = rememberChildPadding().start,
     endPadding: Dp = rememberChildPadding().end,
     title: String? = null,
-    titleStyle: TextStyle = MaterialTheme.typography.headlineLarge.copy(
+    titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontWeight = FontWeight.Medium,
-        fontSize = 30.sp
+        fontSize = 24.sp
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
@@ -300,7 +300,7 @@ private fun VideoRowItemText(
         )
         Text(
             text = video.name,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.SemiBold
             ),
             textAlign = TextAlign.Center,
@@ -310,7 +310,7 @@ private fun VideoRowItemText(
                 .padding(top = 4.dp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            lineHeight = 16.sp
+            lineHeight = 10.sp
         )
     }
 }

@@ -81,7 +81,7 @@ fun ImmersiveVideoList(
                 ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -138,7 +138,7 @@ private fun ImmersiveVideoDescription(
     ) {
         Text(
             text = video.name,
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.headlineSmall,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
