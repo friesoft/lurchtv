@@ -52,6 +52,7 @@ import org.friesoft.lurchtv.presentation.screens.home.HomeScreen
 import org.friesoft.lurchtv.presentation.screens.profile.ProfileScreen
 import org.friesoft.lurchtv.presentation.screens.search.SearchScreen
 import org.friesoft.lurchtv.presentation.utils.Padding
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 val ParentPadding = PaddingValues(vertical = 16.dp, horizontal = 58.dp)
 
@@ -76,7 +77,35 @@ fun DashboardScreen(
     onBackPressed: () -> Unit,
     lastWatchedVideoId: String? = null
 ) {
+    if (isTv()) {
+        DashboardScreenTv(
+            openVideoDetailsScreen = openVideoDetailsScreen,
+            openVideoPlayer = openVideoPlayer,
+            isComingBackFromDifferentScreen = isComingBackFromDifferentScreen,
+            resetIsComingBackFromDifferentScreen = resetIsComingBackFromDifferentScreen,
+            onBackPressed = onBackPressed,
+            lastWatchedVideoId = lastWatchedVideoId
+        )
+    } else {
+        DashboardScreenMobile(
+            openVideoDetailsScreen = openVideoDetailsScreen,
+            openVideoPlayer = openVideoPlayer,
+            lastWatchedVideoId = lastWatchedVideoId
+        )
+    }
+}
+
+@Composable
+private fun DashboardScreenTv(
+    openVideoDetailsScreen: (videoId: String) -> Unit,
+    openVideoPlayer: (Video) -> Unit,
+    isComingBackFromDifferentScreen: Boolean,
+    resetIsComingBackFromDifferentScreen: () -> Unit,
+    onBackPressed: () -> Unit,
+    lastWatchedVideoId: String? = null
+) {
     val density = LocalDensity.current
+
     val focusManager = LocalFocusManager.current
     val navController = rememberNavController()
 
@@ -225,8 +254,9 @@ private fun BackPressHandledArea(
     )
 
 @Composable
-private fun Body(
+fun Body(
     openVideoDetailsScreen: (videoId: String) -> Unit,
+
     openVideoPlayer: (Video) -> Unit,
     updateTopBarVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,

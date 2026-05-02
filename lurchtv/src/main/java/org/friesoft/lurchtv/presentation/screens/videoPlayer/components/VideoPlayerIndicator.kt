@@ -9,6 +9,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,15 +21,43 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.MaterialTheme as TvMaterialTheme
+import androidx.compose.material3.MaterialTheme as MobileMaterialTheme
 import org.friesoft.lurchtv.presentation.utils.handleDPadKeyEvents
 import org.friesoft.lurchtv.presentation.utils.ifElse
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 @Composable
 fun RowScope.VideoPlayerControllerIndicator(
+    progress: Float,
+    onSeek: (seekProgress: Float) -> Unit,
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
+    onSeekingStatusChanged: (isSeeking: Boolean, seekProgress: Float) -> Unit = { _, _ -> },
+) {
+    val isTv = isTv()
+    if (isTv) {
+        VideoPlayerControllerIndicatorTv(
+            progress = progress,
+            onSeek = onSeek,
+            onShowControls = onShowControls,
+            onSeekingStatusChanged = onSeekingStatusChanged
+        )
+    } else {
+        VideoPlayerControllerIndicatorMobile(
+            progress = progress,
+            onSeek = onSeek,
+            onShowControls = onShowControls,
+            onSeekingStatusChanged = onSeekingStatusChanged
+        )
+    }
+}
+
+@Composable
+private fun RowScope.VideoPlayerControllerIndicatorTv(
     progress: Float,
     onSeek: (seekProgress: Float) -> Unit,
     onShowControls: (isSeeking: Boolean) -> Unit = {},
@@ -37,11 +67,12 @@ fun RowScope.VideoPlayerControllerIndicator(
     var isSelected by remember { mutableStateOf(false) }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val color by rememberUpdatedState(
-        newValue = if (isSelected) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.onSurface
+        newValue = if (isSelected) TvMaterialTheme.colorScheme.primary
+        else TvMaterialTheme.colorScheme.onSurface
     )
     val animatedIndicatorHeight by animateDpAsState(
-        targetValue = 4.dp.times((if (isFocused) 2.5f else 1f))
+        targetValue = 4.dp.times((if (isFocused) 2.5f else 1f)),
+        label = ""
     )
     var seekProgress by remember { mutableFloatStateOf(0f) }
 
@@ -61,7 +92,7 @@ fun RowScope.VideoPlayerControllerIndicator(
         val action = event.nativeKeyEvent.action
         val repeatCount = event.nativeKeyEvent.repeatCount
 
-        if (action == KeyEvent.ACTION_DOWN) {
+        if (action == android.view.KeyEvent.ACTION_DOWN) {
             val increment = when {
                 repeatCount > 40 -> 0.05f
                 repeatCount > 20 -> 0.02f
@@ -80,7 +111,7 @@ fun RowScope.VideoPlayerControllerIndicator(
                     return@onPreviewKeyEvent true
                 }
             }
-        } else if (action == KeyEvent.ACTION_UP) {
+        } else if (action == android.view.KeyEvent.ACTION_UP) {
             when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
                     isSelected = !isSelected
@@ -137,3 +168,38 @@ fun RowScope.VideoPlayerControllerIndicator(
         }
     )
 }
+
+@Composable
+private fun RowScope.VideoPlayerControllerIndicatorMobile(
+    progress: Float,
+    onSeek: (seekProgress: Float) -> Unit,
+    onShowControls: (isSeeking: Boolean) -> Unit = {},
+    onSeekingStatusChanged: (isSeeking: Boolean, seekProgress: Float) -> Unit = { _, _ -> },
+) {
+    var isDragging by remember { mutableStateOf(false) }
+    var dragProgress by remember { mutableFloatStateOf(0f) }
+
+    Slider(
+        value = if (isDragging) dragProgress else progress,
+        onValueChange = {
+            isDragging = true
+            dragProgress = it
+            onShowControls(true)
+            onSeekingStatusChanged(true, it)
+        },
+        onValueChangeFinished = {
+            isDragging = false
+            onSeek(dragProgress)
+            onSeekingStatusChanged(false, dragProgress)
+        },
+        modifier = Modifier
+            .weight(1f)
+            .padding(horizontal = 4.dp),
+        colors = SliderDefaults.colors(
+            thumbColor = MobileMaterialTheme.colorScheme.primary,
+            activeTrackColor = MobileMaterialTheme.colorScheme.primary,
+            inactiveTrackColor = Color.White.copy(alpha = 0.24f)
+        )
+    )
+}
+

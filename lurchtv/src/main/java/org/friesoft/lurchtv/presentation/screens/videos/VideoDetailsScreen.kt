@@ -2,12 +2,8 @@ package org.friesoft.lurchtv.presentation.screens.videos
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,16 +12,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.MaterialTheme
 import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.data.entities.toVideo
 import org.friesoft.lurchtv.presentation.common.Error
 import org.friesoft.lurchtv.presentation.common.ImmersiveVideoList
+import org.friesoft.lurchtv.presentation.common.ItemDirection
 import org.friesoft.lurchtv.presentation.common.Loading
 import org.friesoft.lurchtv.presentation.common.VideosRow
-import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 object VideoDetailsScreen {
     const val VideoIdBundleKey = "videoId"
@@ -85,14 +81,28 @@ private fun Details(
 
         if (videoDetails.similarVideos.isNotEmpty()) {
             item {
-                ImmersiveVideoList(
-                    title = stringResource(
-                        id = R.string.video_details_screen_similar_to
-                    ),
-                    videoList = videoDetails.similarVideos,
-                    onVideoClick = refreshScreenWithNewVideo
-                )
+                if (isTv()) {
+                    ImmersiveVideoList(
+                        title = stringResource(
+                            id = R.string.video_details_screen_similar_to
+                        ),
+                        videoList = videoDetails.similarVideos,
+                        onVideoClick = refreshScreenWithNewVideo
+                    )
+                } else {
+                    VideosRow(
+                        title = stringResource(
+                            id = R.string.video_details_screen_similar_to
+                        ),
+                        videoList = videoDetails.similarVideos,
+                        onVideoSelected = refreshScreenWithNewVideo,
+                        itemDirection = ItemDirection.Horizontal,
+                        startPadding = 16.dp,
+                        endPadding = 16.dp
+                    )
+                }
             }
         }
     }
 }
+

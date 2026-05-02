@@ -1,7 +1,9 @@
 package org.friesoft.lurchtv.presentation.screens
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.friesoft.lurchtv.presentation.screens.videos.VideoDetailsScreen
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.VideoPlayerScreen
@@ -12,12 +14,13 @@ enum class Screens(
     val tabIcon: ImageVector? = null
 ) {
     Profile,
-    Home(isTabItem = true),
-    Videothek(isTabItem = true),
+    Home(isTabItem = true, tabIcon = Icons.Default.Home),
+    Videothek(isTabItem = true, tabIcon = Icons.Default.VideoLibrary),
     Search(isTabItem = true, tabIcon = Icons.Default.Search),
     VideoDetails(listOf(VideoDetailsScreen.VideoIdBundleKey)),
     Dashboard,
     VideoPlayer(listOf(VideoPlayerScreen.VideoIdBundleKey));
+
 
     operator fun invoke(): String {
         val argList = StringBuilder()

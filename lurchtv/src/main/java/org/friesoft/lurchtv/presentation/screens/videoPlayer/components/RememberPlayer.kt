@@ -24,16 +24,21 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 
+import androidx.media3.common.AudioAttributes
+import androidx.media3.exoplayer.SeekParameters
+
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun rememberPlayer(context: Context) = remember {
     ExoPlayer.Builder(context)
         .setSeekForwardIncrementMs(10000)
         .setSeekBackIncrementMs(10000)
-        .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+        .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
+        .setAudioAttributes(AudioAttributes.DEFAULT, true)
         .build()
         .apply {
             playWhenReady = true
             repeatMode = Player.REPEAT_MODE_OFF
+            setSeekParameters(SeekParameters.CLOSEST_SYNC)
         }
 }

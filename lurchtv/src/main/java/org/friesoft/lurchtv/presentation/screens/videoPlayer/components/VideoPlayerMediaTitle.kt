@@ -17,11 +17,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
-import androidx.tv.material3.Text
+import androidx.tv.material3.MaterialTheme as TvMaterialTheme
+import androidx.tv.material3.Surface as TvSurface
+import androidx.tv.material3.Text as TvText
+import androidx.compose.material3.MaterialTheme as MobileMaterialTheme
+import androidx.compose.material3.Text as MobileText
 import org.friesoft.lurchtv.R
 import org.friesoft.lurchtv.presentation.theme.LurchTVTheme
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 enum class VideoPlayerMediaTitleType { AD, LIVE, DEFAULT }
 
@@ -33,40 +36,73 @@ fun VideoPlayerMediaTitle(
     modifier: Modifier = Modifier,
     type: VideoPlayerMediaTitleType = VideoPlayerMediaTitleType.DEFAULT
 ) {
+    val isTv = isTv()
     val subTitle = buildString {
         append(secondaryText)
         if (secondaryText.isNotEmpty() && tertiaryText.isNotEmpty()) append(" • ")
         append(tertiaryText)
     }
     Column(modifier.fillMaxWidth()) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        if (isTv) {
+            TvText(title, style = TvMaterialTheme.typography.titleMedium)
+        } else {
+            MobileText(
+                text = title,
+                style = MobileMaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+        }
         Spacer(Modifier.height(4.dp))
         Row {
             // TODO: Replaced with Badge component once developed
             when (type) {
                 VideoPlayerMediaTitleType.AD -> {
-                    Text(
-                        text = stringResource(R.string.ad),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.Black,
-                        modifier = Modifier
-                            .background(Color(0xFFFBC02D), shape = RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                            .alignByBaseline()
-                    )
+                    if (isTv) {
+                        TvText(
+                            text = stringResource(R.string.ad),
+                            style = TvMaterialTheme.typography.labelSmall,
+                            color = Color.Black,
+                            modifier = Modifier
+                                .background(Color(0xFFFBC02D), shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .alignByBaseline()
+                        )
+                    } else {
+                        MobileText(
+                            text = stringResource(R.string.ad),
+                            style = MobileMaterialTheme.typography.labelSmall,
+                            color = Color.Black,
+                            modifier = Modifier
+                                .background(Color(0xFFFBC02D), shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .alignByBaseline()
+                        )
+                    }
                     Spacer(Modifier.width(8.dp))
                 }
 
                 VideoPlayerMediaTitleType.LIVE -> {
-                    Text(
-                        text = stringResource(R.string.live),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.inverseSurface,
-                        modifier = Modifier
-                            .background(Color(0xFFCC0000), shape = RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                            .alignByBaseline()
-                    )
+                    if (isTv) {
+                        TvText(
+                            text = stringResource(R.string.live),
+                            style = TvMaterialTheme.typography.labelSmall,
+                            color = TvMaterialTheme.colorScheme.inverseSurface,
+                            modifier = Modifier
+                                .background(Color(0xFFCC0000), shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .alignByBaseline()
+                        )
+                    } else {
+                        MobileText(
+                            text = stringResource(R.string.live),
+                            style = MobileMaterialTheme.typography.labelSmall,
+                            color = Color.White,
+                            modifier = Modifier
+                                .background(Color(0xFFCC0000), shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .alignByBaseline()
+                        )
+                    }
 
                     Spacer(Modifier.width(8.dp))
                 }
@@ -74,11 +110,20 @@ fun VideoPlayerMediaTitle(
                 VideoPlayerMediaTitleType.DEFAULT -> {}
             }
 
-            Text(
-                text = subTitle,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.alignByBaseline()
-            )
+            if (isTv) {
+                TvText(
+                    text = subTitle,
+                    style = TvMaterialTheme.typography.labelSmall,
+                    modifier = Modifier.alignByBaseline()
+                )
+            } else {
+                MobileText(
+                    text = subTitle,
+                    style = MobileMaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.alignByBaseline()
+                )
+            }
         }
     }
 }
@@ -87,7 +132,7 @@ fun VideoPlayerMediaTitle(
 @Composable
 private fun VideoPlayerMediaTitlePreviewSeries() {
     LurchTVTheme {
-        Surface(shape = RectangleShape) {
+        TvSurface(shape = RectangleShape) {
             VideoPlayerMediaTitle(
                 title = "True Detective",
                 secondaryText = "S1E5",
@@ -102,7 +147,7 @@ private fun VideoPlayerMediaTitlePreviewSeries() {
 @Composable
 private fun VideoPlayerMediaTitlePreviewLive() {
     LurchTVTheme {
-        Surface(shape = RectangleShape) {
+        TvSurface(shape = RectangleShape) {
             VideoPlayerMediaTitle(
                 title = "MacLaren Reveal Their 2022 Car: The MCL36",
                 secondaryText = "Formula 1",
@@ -117,7 +162,7 @@ private fun VideoPlayerMediaTitlePreviewLive() {
 @Composable
 private fun VideoPlayerMediaTitlePreviewAd() {
     LurchTVTheme {
-        Surface(shape = RectangleShape) {
+        TvSurface(shape = RectangleShape) {
             VideoPlayerMediaTitle(
                 title = "Samsung Galaxy Note20 | Ultra 5G",
                 secondaryText = "Get the most powerful Note yet",
@@ -127,3 +172,4 @@ private fun VideoPlayerMediaTitlePreviewAd() {
         }
     }
 }
+

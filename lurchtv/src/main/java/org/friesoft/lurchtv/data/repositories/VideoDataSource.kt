@@ -66,11 +66,12 @@ class VideoDataSource @Inject constructor(
     }
 
     suspend fun getFeaturedVideoList(): List<Video> {
-        return getBaseVideos().take(5).map { it.toVideo(ThumbnailType.Long) }
+        // Return only the first video as featured
+        return getBaseVideos().take(1).map { it.toVideo(ThumbnailType.Long) }
     }
 
     suspend fun getRecentVideoList(): List<Video> {
-        return getBaseVideos().take(8).map { it.toVideo(ThumbnailType.Long) }
+        return getBaseVideos().take(12).map { it.toVideo(ThumbnailType.Long) }
     }
 
 
@@ -86,3 +87,4 @@ class VideoDataSource @Inject constructor(
         return getBaseVideos().take(24).map { it.toVideo() }
     }
 }
+

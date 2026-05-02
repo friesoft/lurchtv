@@ -12,34 +12,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
+import androidx.tv.material3.MaterialTheme as TvMaterialTheme
+import androidx.tv.material3.Text as TvText
+import androidx.compose.material3.MaterialTheme as MobileMaterialTheme
+import androidx.compose.material3.Text as MobileText
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 @Composable
 fun DotSeparatedRow(
     modifier: Modifier = Modifier,
     texts: List<String>
 ) {
+    val isTv = isTv()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         texts.forEachIndexed { index, text ->
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.Normal
+            if (isTv) {
+                TvText(
+                    text = text,
+                    style = TvMaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Normal
+                    )
                 )
-            )
+            } else {
+                MobileText(
+                    text = text,
+                    style = MobileMaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
+                    color = MobileMaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             if (index != texts.lastIndex) {
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 1f))
+                        .background(
+                            if (isTv) TvMaterialTheme.colorScheme.onSurface
+                            else MobileMaterialTheme.colorScheme.onSurfaceVariant
+                        )
                         .size(4.dp)
                 )
             }
         }
     }
 }
+

@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.tv.material3.LocalContentColor
-import androidx.tv.material3.MaterialTheme
 import org.friesoft.lurchtv.presentation.App
 import org.friesoft.lurchtv.presentation.theme.LurchTVTheme
+import org.friesoft.lurchtv.presentation.utils.isTv
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.tv.material3.MaterialTheme as TvMaterialTheme
+import androidx.tv.material3.LocalContentColor as TvLocalContentColor
+import androidx.compose.material3.MaterialTheme as MobileMaterialTheme
+import androidx.compose.material3.Surface as MobileSurface
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,11 +26,24 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             LurchTVTheme {
-                Box(
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
-                ) {
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface
+                if (isTv()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(TvMaterialTheme.colorScheme.surface)
+                    ) {
+                        CompositionLocalProvider(
+                            TvLocalContentColor provides TvMaterialTheme.colorScheme.onSurface
+                        ) {
+                            App(
+                                onBackPressed = onBackPressedDispatcher::onBackPressed,
+                            )
+                        }
+                    }
+                } else {
+                    MobileSurface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MobileMaterialTheme.colorScheme.background
                     ) {
                         App(
                             onBackPressed = onBackPressedDispatcher::onBackPressed,
@@ -38,3 +54,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

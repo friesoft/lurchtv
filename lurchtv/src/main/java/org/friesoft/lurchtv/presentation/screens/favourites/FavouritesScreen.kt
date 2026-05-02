@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.presentation.common.Loading
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 @Composable
 fun FavouritesScreen(
@@ -60,7 +61,8 @@ private fun Catalog(
     modifier: Modifier = Modifier,
     lastWatchedVideoId: String? = null,
 ) {
-    val childPadding = rememberChildPadding()
+    val isTv = isTv()
+    val childPadding = if (isTv) rememberChildPadding() else org.friesoft.lurchtv.presentation.utils.Padding(16.dp, 16.dp, 16.dp, 16.dp)
     val filteredVideosGridState = rememberLazyGridState()
     val shouldShowTopBar by remember {
         derivedStateOf {
@@ -73,11 +75,11 @@ private fun Catalog(
         onScroll(shouldShowTopBar)
     }
     LaunchedEffect(isTopBarVisible) {
-        if (isTopBarVisible) filteredVideosGridState.animateScrollToItem(0)
+        if (isTopBarVisible && isTv) filteredVideosGridState.animateScrollToItem(0)
     }
 
     val chipRowTopPadding by animateDpAsState(
-        targetValue = if (shouldShowTopBar) 0.dp else childPadding.top, label = ""
+        targetValue = if (shouldShowTopBar || !isTv) 0.dp else childPadding.top, label = ""
     )
 
     Column(
@@ -98,3 +100,5 @@ private fun Catalog(
         )
     }
 }
+
+

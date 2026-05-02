@@ -6,6 +6,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +37,7 @@ fun VideoPlayerOverlay(
     modifier: Modifier = Modifier,
     isControlsVisible: Boolean = true,
     focusRequester: FocusRequester = remember { FocusRequester() },
+    onTap: () -> Unit = {},
     showControls: (isPlaying: Boolean, isSeeking: Boolean) -> Unit = { _, _ -> },
     centerButton: @Composable () -> Unit = {},
     subtitles: @Composable () -> Unit = {},
@@ -47,7 +50,13 @@ fun VideoPlayerOverlay(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onTap
+            ),
         contentAlignment = Alignment.Center
     ) {
         AnimatedVisibility(isControlsVisible, Modifier, fadeIn(), fadeOut()) {
@@ -72,6 +81,12 @@ fun VideoPlayerOverlay(
                     modifier = Modifier
                         .padding(horizontal = 56.dp)
                         .padding(bottom = 32.dp, top = 8.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            // Consume clicks in the controls area to prevent toggle
+                        }
                 ) {
                     controls()
                 }
@@ -130,3 +145,4 @@ private fun VideoPlayerOverlayPreview() {
         }
     }
 }
+

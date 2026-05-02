@@ -6,27 +6,44 @@ import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.data.repositories.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val videoRepository: VideoRepository
 ) : ViewModel() {
 
-    private val internalSearchState = MutableSharedFlow<SearchState>()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private val internalSearchState = _searchQuery
+        .debounce(500L)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            flow {
+                if (query.isEmpty()) {
+                    emit(SearchState.Done(emptyMap()))
+                    return@flow
+                }
+                emit(SearchState.Searching)
+                val result = videoRepository.searchVideosCategorized(query = query)
+                emit(SearchState.Done(result))
+            }
+        }
 
     fun query(queryString: String) {
-        viewModelScope.launch { postQuery(queryString) }
-    }
-
-    private suspend fun postQuery(queryString: String) {
-        internalSearchState.emit(SearchState.Searching)
-        val result = videoRepository.searchVideosCategorized(query = queryString)
-        internalSearchState.emit(SearchState.Done(result))
+        _searchQuery.value = queryString
     }
 
     val searchState = combine(
@@ -54,3 +71,5 @@ sealed interface SearchState {
     data object Searching : SearchState
     data class Done(val categories: Map<String, VideoList>) : SearchState
 }
+
+

@@ -37,11 +37,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
+import androidx.tv.material3.MaterialTheme as TvMaterialTheme
+import androidx.tv.material3.Text as TvText
+import androidx.compose.material3.MaterialTheme as MobileMaterialTheme
+import androidx.compose.material3.Text as MobileText
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoList
 import org.friesoft.lurchtv.presentation.screens.dashboard.rememberChildPadding
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 enum class ItemDirection(val aspectRatio: Float) {
     Vertical(10.5f / 16f),
@@ -57,31 +60,44 @@ fun VideosRow(
     startPadding: Dp = rememberChildPadding().start,
     endPadding: Dp = rememberChildPadding().end,
     title: String? = null,
-    titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
-        fontWeight = FontWeight.Medium,
-        fontSize = 24.sp
-    ),
+    titleStyle: TextStyle? = null,
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
     lastWatchedVideoId: String? = null,
     onVideoSelected: (video: Video) -> Unit = {}
 ) {
+    val isTv = isTv()
     val lazyRow = remember { FocusRequester() }
     val videoFocusRequesters = remember(videoList) {
         videoList.associate { it.id to FocusRequester() }
     }
 
+    val finalTitleStyle = titleStyle ?: (if (isTv) TvMaterialTheme.typography.titleLarge else MobileMaterialTheme.typography.titleLarge).copy(
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp
+    )
+
     Column(
         modifier = modifier.focusGroup()
     ) {
         if (title != null) {
-            Text(
-                text = title,
-                style = titleStyle,
-                modifier = Modifier
-                    .alpha(1f)
-                    .padding(start = startPadding, top = 16.dp, bottom = 16.dp)
-            )
+            if (isTv) {
+                TvText(
+                    text = title,
+                    style = finalTitleStyle,
+                    modifier = Modifier
+                        .alpha(1f)
+                        .padding(start = startPadding, top = 16.dp, bottom = 16.dp)
+                )
+            } else {
+                MobileText(
+                    text = title,
+                    style = finalTitleStyle,
+                    modifier = Modifier
+                        .alpha(1f)
+                        .padding(start = startPadding, top = 16.dp, bottom = 16.dp)
+                )
+            }
         }
         LazyRow(
             contentPadding = PaddingValues(
@@ -112,7 +128,8 @@ fun VideosRow(
                     },
                     video = video,
                     showItemTitle = showItemTitle,
-                    showIndexOverImage = showIndexOverImage
+                    showIndexOverImage = showIndexOverImage,
+                    isTv = isTv
                 )
             }
         }
@@ -128,33 +145,47 @@ fun ImmersiveListVideosRow(
     startPadding: Dp = rememberChildPadding().start,
     endPadding: Dp = rememberChildPadding().end,
     title: String? = null,
-    titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
-        fontWeight = FontWeight.Medium,
-        fontSize = 24.sp
-    ),
+    titleStyle: TextStyle? = null,
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
     lastWatchedVideoId: String? = null,
     onVideoSelected: (Video) -> Unit = {},
     onVideoFocused: (Video) -> Unit = {}
 ) {
+    val isTv = isTv()
     val lazyRow = remember { FocusRequester() }
     val videoFocusRequesters = remember(videoList) {
         videoList.associate { it.id to FocusRequester() }
     }
 
+    val finalTitleStyle = titleStyle ?: (if (isTv) TvMaterialTheme.typography.titleLarge else MobileMaterialTheme.typography.titleLarge).copy(
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp
+    )
+
     Column(
         modifier = modifier.focusGroup()
     ) {
         if (title != null) {
-            Text(
-                text = title,
-                style = titleStyle,
-                modifier = Modifier
-                    .alpha(1f)
-                    .padding(start = startPadding)
-                    .padding(vertical = 16.dp)
-            )
+            if (isTv) {
+                TvText(
+                    text = title,
+                    style = finalTitleStyle,
+                    modifier = Modifier
+                        .alpha(1f)
+                        .padding(start = startPadding)
+                        .padding(vertical = 16.dp)
+                )
+            } else {
+                MobileText(
+                    text = title,
+                    style = finalTitleStyle,
+                    modifier = Modifier
+                        .alpha(1f)
+                        .padding(start = startPadding)
+                        .padding(vertical = 16.dp)
+                )
+            }
         }
         LazyRow(
             contentPadding = PaddingValues(start = startPadding, end = endPadding),
@@ -188,7 +219,8 @@ fun ImmersiveListVideosRow(
                     onVideoFocused = onVideoFocused,
                     video = video,
                     showItemTitle = showItemTitle,
-                    showIndexOverImage = showIndexOverImage
+                    showIndexOverImage = showIndexOverImage,
+                    isTv = isTv
                 )
             }
         }
@@ -203,6 +235,7 @@ private fun VideoRowItem(
     onVideoSelected: (Video) -> Unit,
     showItemTitle: Boolean,
     showIndexOverImage: Boolean,
+    isTv: Boolean,
     modifier: Modifier = Modifier,
     itemDirection: ItemDirection = ItemDirection.Vertical,
     onVideoFocused: (Video) -> Unit = {},
@@ -216,7 +249,8 @@ private fun VideoRowItem(
             VideoRowItemText(
                 showItemTitle = showItemTitle,
                 isItemFocused = isFocused,
-                video = video
+                video = video,
+                isTv = isTv
             )
         },
         modifier = Modifier
@@ -240,7 +274,8 @@ private fun VideoRowItem(
             modifier = Modifier.aspectRatio(itemDirection.aspectRatio),
             showIndexOverImage = showIndexOverImage,
             video = video,
-            index = index
+            index = index,
+            isTv = isTv
         )
     }
 }
@@ -250,6 +285,7 @@ private fun VideoRowItemImage(
     video: Video,
     showIndexOverImage: Boolean,
     index: Int,
+    isTv: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(contentAlignment = Alignment.CenterStart) {
@@ -269,19 +305,35 @@ private fun VideoRowItemImage(
                 },
         )
         if (showIndexOverImage) {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "#${index.inc()}",
-                style = MaterialTheme.typography.displayLarge
-                    .copy(
-                        shadow = Shadow(
-                            offset = Offset(0.5f, 0.5f),
-                            blurRadius = 5f
+            if (isTv) {
+                TvText(
+                    modifier = Modifier.padding(16.dp),
+                    text = "#${index.inc()}",
+                    style = TvMaterialTheme.typography.displayLarge
+                        .copy(
+                            shadow = Shadow(
+                                offset = Offset(0.5f, 0.5f),
+                                blurRadius = 5f
+                            ),
+                            color = Color.White
                         ),
-                        color = Color.White
-                    ),
-                fontWeight = FontWeight.SemiBold
-            )
+                    fontWeight = FontWeight.SemiBold
+                )
+            } else {
+                MobileText(
+                    modifier = Modifier.padding(16.dp),
+                    text = "#${index.inc()}",
+                    style = MobileMaterialTheme.typography.displayLarge
+                        .copy(
+                            shadow = Shadow(
+                                offset = Offset(0.5f, 0.5f),
+                                blurRadius = 5f
+                            ),
+                            color = Color.White
+                        ),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
@@ -291,26 +343,45 @@ private fun VideoRowItemText(
     showItemTitle: Boolean,
     isItemFocused: Boolean,
     video: Video,
+    isTv: Boolean,
     modifier: Modifier = Modifier
 ) {
     if (showItemTitle) {
         val videoNameAlpha by animateFloatAsState(
-            targetValue = if (isItemFocused) 1f else 0f,
+            targetValue = if (isItemFocused || !isTv) 1f else 0f,
             label = "",
         )
-        Text(
-            text = video.name,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
-            textAlign = TextAlign.Center,
-            modifier = modifier
-                .alpha(videoNameAlpha)
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            lineHeight = 10.sp
-        )
+        if (isTv) {
+            TvText(
+                text = video.name,
+                style = TvMaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                textAlign = TextAlign.Center,
+                modifier = modifier
+                    .alpha(videoNameAlpha)
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 10.sp
+            )
+        } else {
+            MobileText(
+                text = video.name,
+                style = MobileMaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                textAlign = TextAlign.Center,
+                modifier = modifier
+                    .alpha(videoNameAlpha)
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 10.sp
+            )
+        }
     }
 }
+

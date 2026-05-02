@@ -1,6 +1,8 @@
 package org.friesoft.lurchtv.presentation.screens.videoPlayer
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,21 +17,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.compose.PlayerSurface
-import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
-import androidx.media3.ui.compose.modifiers.resizeWithContentScale
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import org.friesoft.lurchtv.data.entities.Video
 import org.friesoft.lurchtv.data.entities.VideoDetails
 import org.friesoft.lurchtv.presentation.common.Error
@@ -44,7 +50,7 @@ import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.VideoPla
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.rememberPlayer
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.rememberVideoPlayerPulseState
 import org.friesoft.lurchtv.presentation.screens.videoPlayer.components.rememberVideoPlayerState
-import org.friesoft.lurchtv.presentation.utils.handleDPadKeyEvents
+import org.friesoft.lurchtv.presentation.utils.isTv
 
 object VideoPlayerScreen {
     const val VideoIdBundleKey = "videoId"
@@ -93,6 +99,24 @@ fun VideoPlayerScreenContent(
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
 
+    val window = (context as? Activity)?.window
+    val insetsController = window?.let { WindowCompat.getInsetsController(it, it.decorView) }
+    val isTv = isTv()
+
+    DisposableEffect(Unit) {
+        if (!isTv) {
+            insetsController?.apply {
+                hide(WindowInsetsCompat.Type.systemBars())
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+        onDispose {
+            if (!isTv) {
+                insetsController?.show(WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
     val videoPlayerState = rememberVideoPlayerState(
         hideSeconds = 4,
     )
@@ -103,7 +127,9 @@ fun VideoPlayerScreenContent(
             exoPlayer.addMediaItem(it.intoMediaItem())
         }
         val savedPosition = viewModel.getPlaybackPosition()
-        exoPlayer.seekTo(savedPosition)
+        if (savedPosition > 0) {
+            exoPlayer.seekTo(savedPosition)
+        }
         exoPlayer.prepare()
     }
 
@@ -139,7 +165,7 @@ fun VideoPlayerScreenContent(
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var playWhenReady by remember { mutableStateOf(exoPlayer.playWhenReady) }
     DisposableEffect(exoPlayer) {
-        val listener = object : androidx.media3.common.Player.Listener {
+        val listener = object : Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
                 isPlaying = playing
             }
@@ -169,21 +195,30 @@ fun VideoPlayerScreenContent(
 
     Box(
         Modifier
+            .fillMaxSize()
+            .background(Color.Black)
             .focusRequester(backgroundFocusRequester)
             .dPadEvents(
                 exoPlayer,
                 videoPlayerState,
                 pulseState
             )
-            .focusable()
+            .focusable(),
+        contentAlignment = Alignment.Center
     ) {
-        PlayerSurface(
-            player = exoPlayer,
-            surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
-            modifier = Modifier.resizeWithContentScale(
-                contentScale = ContentScale.Fit,
-                sourceSizeDp = null
-            )
+        AndroidView<PlayerView>(
+            factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = exoPlayer
+                    useController = false
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                    setBackgroundColor(android.graphics.Color.BLACK)
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+            update = { view ->
+                view.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            }
         )
 
         val focusRequester = remember { FocusRequester() }
@@ -192,6 +227,13 @@ fun VideoPlayerScreenContent(
             focusRequester = focusRequester,
             isPlaying = isPlaying,
             isControlsVisible = videoPlayerState.isControlsVisible,
+            onTap = {
+                if (videoPlayerState.isControlsVisible) {
+                    videoPlayerState.hideControls()
+                } else {
+                    videoPlayerState.showControls()
+                }
+            },
             centerButton = { VideoPlayerPulse(pulseState) },
             subtitles = { /* TODO Implement subtitles */ },
             showControls = { playing, seeking -> videoPlayerState.showControls(playing, seeking) },
